@@ -3,9 +3,6 @@ version '1.0'
 
 buildscript {
     repositories {
-        flatDir {
-            dirs 'libs'
-        }
         google()
         mavenCentral()
     }
@@ -17,16 +14,94 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
+        //gradle plugin 4.x
         flatDir {
-            dirs 'libs'
+            dirs project(':tradplus_sdk').file('libs')
         }
         google()
         mavenCentral()
-
+        // TradPlus
+        mavenCentral()
+        // Ironsource
+        maven { url 'https://android-sdk.is.com/' }
+        // Tapjoy
+        maven {
+            name "Tapjoy's maven repo"
+            url "https://sdk.tapjoy.com/"
+        }
+        maven {
+            name 'Google'
+            url 'https://maven.google.com/'
+        }
+        // Maio
+        maven { url "https://imobile-maio.github.io/maven" }
+        // Ogury
+        maven { url 'https://maven.ogury.co' }
+        // Appnext
+        maven {
+            allowInsecureProtocol true
+            url "http://dl.appnext.com/"
+        }
+        // Smaato
+        // Add the following repository setup to your project’s main build.gradle file
+        maven {
+            url "https://s3.amazonaws.com/smaato-sdk-releases/"
+        }
+        // Huawei
+        // 配置HMS Core SDK的Maven仓地址。
+        maven { url 'https://developer.huawei.com/repo/' }
+        // Mintegral
+        //Launch GP market application， Android X Version
+        //If you fail to pull the code using gradle, add the maven warehouse configuration to the project root build.gradle file
+        maven {
+            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea"
+        }
+        maven {
+            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_china"
+        }
+        // Superawesome
+        maven { url "https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo" }
+        // Verve
+        maven { url 'https://verve.jfrog.io/artifactory/verve-gradle-release' }
     }
 }
 
+
+
+def printFileContent(String filePath) {
+    def config = file(filePath)
+    config.eachLine { line ->
+        String content = line
+        project.logger.error(content)
+    }
+}
+
+
+def gradleProperties = new Properties()
+def gradlePropertiesFile = rootProject.file('gradle.properties')
+if (gradlePropertiesFile.exists()) {
+    gradlePropertiesFile.withReader('UTF-8') { reader ->
+        gradleProperties.load(reader)
+    }
+}
+
+def isReleaseOnGP = gradleProperties.getProperty('isReleaseOnGP')
+if (isReleaseOnGP == null) {
+    throw new GradleException("请先在android目录下的gradle.properties中配置isReleaseOnGP属性,为0时表示上架gp或者海外平台,为1表示上架国内平台")
+}
+
 apply plugin: 'com.android.library'
+if (isReleaseOnGP as int == 0) {
+    project.logger.error('当前集成广告源:GP')
+    project.logger.error("集成广告源如下(打印信息,非错误)")
+    printFileContent("tradplus_gp.gradle")
+    apply from: "tradplus_gp.gradle"
+} else {
+    project.logger.error('当前集成广告源:国外')
+    project.logger.error("集成广告源如下(打印信息,非错误)")
+    printFileContent("tradplus_cn.gradle")
+    apply from: "tradplus_cn.gradle"
+}
 
 android {
     compileSdkVersion 31
@@ -38,12 +113,15 @@ android {
 
     defaultConfig {
         minSdkVersion 16
+        buildTypes {
+            release {
+                consumerProguardFiles 'consumer-rules.pro'
+            }
+            debug {
+                consumerProguardFiles 'consumer-rules.pro'
+            }
+        }
     }
 }
 
-def TRADPLUS_VERSION = "8.6.0.1"
 
-dependencies {
-    //TradPlus
-    compileOnly "com.tradplusad:tradplus:${TRADPLUS_VERSION}"
-}

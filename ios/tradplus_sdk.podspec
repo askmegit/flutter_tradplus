@@ -17,6 +17,7 @@ Tradplus SDK Flutter project.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '10.0'
+  s.static_framework = true
   
   s.frameworks = 'NetworkExtension','DeviceCheck'
 

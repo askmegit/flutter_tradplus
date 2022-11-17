@@ -1,0 +1,123 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.tradplus_sdk">
+
+
+    <!--穿山甲国内SDK——必要权限-->
+    <!--必要权限，解决安全风险漏洞，发送和注册广播事件需要调用带有传递权限的接口-->
+    <permission
+        android:name="${applicationId}.openadsdk.permission.TT_PANGOLIN"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="${applicationId}.openadsdk.permission.TT_PANGOLIN" />
+
+
+
+
+    <!--    这个库最低要求23,但是宿主工程最低要求21-->
+    <uses-sdk tools:overrideLibrary="com.tradplus.ads.mimo" />
+
+
+    <application
+        android:hardwareAccelerated="true"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <receiver
+            android:name="com.tradplus.china.common.NotificationBroadcaseReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="action_notification_click" />
+                <action android:name="action_notification_cancel" />
+            </intent-filter>
+        </receiver>
+
+
+
+
+        <!--        在 Android 6.0 中，SDK移除了对 Apache HTTP 客户端的支持。从 Android 9 开始，该内容库已从 bootclasspath 中移除，且默认情况下应用无法使用它-->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <!--穿山甲国内-->
+        <!--        需要在AndroidManifest.xml中添加 provider 标签
+        其中file_paths .xml文件TP直接写入toutiao adapter中。如果没成功引入，会报错找不到该文件。
+        xml找不到，开发者需自行检查，项目中是否正常引入toutiao adapter。-->
+        <provider
+            android:name="com.bytedance.sdk.openadsdk.TTFileProvider"
+            android:authorities="${applicationId}.TTFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <provider
+            android:name="com.bytedance.sdk.openadsdk.multipro.TTMultiProvider"
+            android:authorities="${applicationId}.TTMultiProvider"
+            android:exported="false" />
+
+
+        <!--sigmob_provider_paths.xml已经添加到Sigmob Adapter中-->
+        <!--其中sigmob_provider_paths.xml文件TP直接写入sigmob adapter中。如果没成功引入，会报错找不到该文件。
+xml找不到，开发者需自行检查，项目中是否正常引入sigmob adapter。-->
+        <provider
+            android:name="com.sigmob.sdk.SigmobFileProvider"
+            android:authorities="${applicationId}.sigprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/sigmob_provider_paths" />
+        </provider>
+        <!--Tencent GDT -->
+        <!--        如果您打包 App 时的 targetSdkVersion >= 24，为了让 SDK 能够正常下载、安装 App 类广告。需要在AndroidManifest.xml中添加 provider 标签
+        其中gdt_file_path.xml文件腾讯方直接写入GDT SDK中。如果没成功引入资源包，会报错找不到该文件。
+        xml找不到，开发者需自行检查，项目中是否正常引入GDT SDK。-->
+        <provider
+            android:name="com.qq.e.comm.GDTFileProvider"
+            android:authorities="${applicationId}.gdt.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/gdt_file_path" />
+        </provider>
+
+
+        <!--国内米盟Mimo-->
+
+        <!--        其中file_paths.xml文件TP直接写入mimo adapter中。如果没成功引入，会报错找不到该文件。
+
+        xml找不到，开发者需自行检查，项目中是否正常引入mimo adapter。
+
+        AndroidX 项目需要添加-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+        <!--国内的Mintegral-->
+        <!--        中国大陆流量版本必需，海外版本可以不添加
+        需要在AndroidManifest.xml中添加 provider 标签
+        其中mb_provider_paths文件TP直接写入MTG adapter中。如果没成功引入，会报错找不到该文件。
+        xml找不到，开发者需自行检查，项目中是否正常引入MTG adapter。-->
+        <provider
+            android:name="com.mbridge.msdk.foundation.tools.MBFileProvider"
+            android:authorities="${applicationId}.mbFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/mb_provider_paths" />
+        </provider>
+
+    </application>
+
+</manifest>
