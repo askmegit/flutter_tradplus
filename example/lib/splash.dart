@@ -71,15 +71,14 @@ class SplashWidgetState extends State<SplashWidget> {
               ],
             ),
           ),
-          Expanded(
-              flex: 1,
-              child: Container(
-                // height: 100,
-                // width: 320,
-                // color: Colors.deepPurple,
-                margin: const EdgeInsets.only(top: 20),
-                child: getSplash(),
-              ))
+          Container(
+            width: double.infinity,
+            // height: 100,
+            // width: 320,
+            // color: Colors.deepPurple,
+            margin: const EdgeInsets.only(top: 20),
+            child: getSplash(),
+          )
         ],
       ),
     );
