@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 class TPNativeViewWidget extends StatefulWidget
 {
-  const TPNativeViewWidget(this.adUnitId,this.width,this.height,{Key? key, this.sceneId = "",this.className = "",this.extraMap,this.customAdInfo}) : super(key: key);
+  const TPNativeViewWidget(this.adUnitId,this.width,this.height,{Key? key, this.sceneId = "",this.className = "",this.extraMap,this.customAdInfo,this.isNativeSplash=false}) : super(key: key);
   final String adUnitId;
   final double? width;
   final double? height;
@@ -12,6 +12,7 @@ class TPNativeViewWidget extends StatefulWidget
   final String? className;
   final Map? extraMap;
   final Map? customAdInfo;
+  final bool isNativeSplash;
   @override
   State<StatefulWidget> createState() {
     return TPNativeViewWidgetState();
@@ -31,6 +32,7 @@ class TPNativeViewWidgetState extends State<TPNativeViewWidget> {
           "extraMap" : widget.extraMap,
           "width": widget.width,
           "height": widget.height,
+          "isNativeSplash":widget.isNativeSplash,
           "layoutName" : widget.className,
           "customAdInfo":widget.customAdInfo
         },
@@ -47,6 +49,7 @@ class TPNativeViewWidgetState extends State<TPNativeViewWidget> {
             "height": widget.height,
             "className": widget.className,
             "extraMap": widget.extraMap,
+            "isNativeSplash":widget.isNativeSplash,
             "sceneId":widget.sceneId,
             "customAdInfo":widget.customAdInfo
           },

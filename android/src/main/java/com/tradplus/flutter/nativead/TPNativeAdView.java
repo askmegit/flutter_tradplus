@@ -25,14 +25,15 @@ import io.flutter.plugin.platform.PlatformView;
 public class TPNativeAdView implements PlatformView {
 
     ViewGroup rootView;
+    String adUnitId;
 
     public TPNativeAdView(Context context, BinaryMessenger messenger, int viewID, Map<String, Object> args) {
         try {
-            String adUnitId = (String) args.get("adUnitId");
+            adUnitId = (String) args.get("adUnitId");
             String layoutName = (String) args.get("layoutName");
 
             String adSceneId = (String) args.get("adSceneId");
-            Map<String, Object> customAdInfo = (Map<String, Object>)args.get("customAdInfo");
+            Map<String, Object> customAdInfo = (Map<String, Object>) args.get("customAdInfo");
             Map<String, Object> extraMap = (Map<String, Object>) args.get("extraMap");
 
             if (TextUtils.isEmpty(adUnitId)) {
@@ -43,9 +44,17 @@ public class TPNativeAdView implements PlatformView {
             // create containerView
             ViewGroup viewGroup = new FrameLayout(TradPlusSdk.getInstance().getActivity());
 
-            if (!TextUtils.isEmpty(layoutName)) {
+
+            boolean isNativeSplash = (boolean) args.get("isNativeSplash");
+
+            if (isNativeSplash) {
+                boolean isSuccess = TPNativeManager.getInstance().renderNativeSplashView(adUnitId, viewGroup);
+                if (!isSuccess) {
+                    Log.v("TradPlusLog", "Native render failed");
+                }
+            } else if (!TextUtils.isEmpty(layoutName)) {
                 int layoutId = TPUtils.getLayoutIdByName(TradPlusSdk.getInstance().getActivity(), layoutName);
-                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, layoutId, adSceneId,customAdInfo);
+                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, layoutId, adSceneId, customAdInfo);
                 if (!isSuccess) {
                     Log.v("TradPlusLog", "Native render failed");
 
@@ -54,7 +63,7 @@ public class TPNativeAdView implements PlatformView {
 
             if (extraMap != null && extraMap.containsKey("parent")) {
                 TPNativeAdRender adRender = new TPFlutterAdRender(extraMap);
-                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, adRender, adSceneId,customAdInfo);
+                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, adRender, adSceneId, customAdInfo);
                 if (!isSuccess) {
                     Log.v("TradPlusLog", "Native render failed");
 
@@ -66,6 +75,7 @@ public class TPNativeAdView implements PlatformView {
             e.printStackTrace();
         }
     }
+
     @Override
     public View getView() {
         return rootView;
@@ -73,7 +83,15 @@ public class TPNativeAdView implements PlatformView {
 
     @Override
     public void dispose() {
-
+        try {
+            if (rootView != null) {
+                rootView.removeAllViews();
+                rootView = null;
+                TPNativeManager.getInstance().removeNative(adUnitId);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -19,11 +19,12 @@ import io.flutter.plugin.platform.PlatformView;
 public class TPSplashAdView implements PlatformView {
 
     ViewGroup rootView;
+    String adUnitId;
 
     public TPSplashAdView(Context context, BinaryMessenger messenger, Map<String, Object> args) {
         try {
 
-            String adUnitId = (String) args.get("adUnitId");
+            adUnitId = (String) args.get("adUnitId");
             String adSceneId = (String) args.get("adSceneId");
             Map<String, Object> extraMap = (Map<String, Object>) args.get("extraMap");
             Log.i("TPSplashAdView", "adUnitId = " + adUnitId + " adSceneId = " + adSceneId);
@@ -37,10 +38,10 @@ public class TPSplashAdView implements PlatformView {
             // create containerView
             ViewGroup viewGroup = new FrameLayout(TradPlusSdk.getInstance().getActivity());
 
-            viewGroup.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+            viewGroup.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             Log.i("TPSplashAdView", "adUnitId1 = " + adUnitId + " adSceneId1 = " + adSceneId);
             boolean isSuccess = TPSplashManager.getInstance().renderView(adUnitId, viewGroup, adSceneId);
-            if(!isSuccess){
+            if (!isSuccess) {
                 Log.v("TradPlusLog", "Splash render failed");
 
             }
@@ -58,6 +59,14 @@ public class TPSplashAdView implements PlatformView {
 
     @Override
     public void dispose() {
-
+        try {
+            if (rootView != null) {
+                rootView.removeAllViews();
+                rootView = null;
+                TPSplashManager.getInstance().removeSplash(adUnitId);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -128,6 +128,9 @@ public class TPSplashManager  {
         }
         return true;
     }
+    public void removeSplash(String adUnitId) {
+        mTPSplashs.remove(adUnitId);
+    }
 
 
     private class TPSplashDownloadListener implements DownloadListener {

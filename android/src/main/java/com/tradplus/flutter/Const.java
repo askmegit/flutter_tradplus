@@ -10,6 +10,8 @@ public class Const {
     public static final String BACKGROUND_COLOR = "backgroundColorStr";
     public static final String TEXT_COLOR = "textColorStr";
     public static final String TEXT_SIZE = "textSize";
+    public static final String TEXT_CENTER = "textCenter";
+    public static final String TEXT_LINES = "textLines";
     public static final String CUSTOM_CLICK = "isCustomClick";
 
 
@@ -23,7 +25,6 @@ public class Const {
         public static final String cta = "cta";
 
     }
-
 
 
 }

@@ -16,8 +16,10 @@ import com.tradplus.ads.open.DownloadListener;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
 import com.tradplus.ads.open.interstitial.InterstitialAdListener;
 import com.tradplus.ads.open.nativead.NativeAdListener;
+import com.tradplus.ads.open.nativead.NativeSplashAdListener;
 import com.tradplus.ads.open.nativead.TPNative;
 import com.tradplus.ads.open.nativead.TPNativeAdRender;
+import com.tradplus.ads.open.nativead.TPNativeSplash;
 import com.tradplus.flutter.TPUtils;
 import com.tradplus.flutter.TradPlusSdk;
 
@@ -50,6 +52,7 @@ public class TPNativeManager {
 
     // 保存广告位对象
     private Map<String, TPNative> mTPNatives = new ConcurrentHashMap<>();
+    private Map<String, TPNativeSplash> mTPNativeSplashs = new ConcurrentHashMap<>();
 
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         // 第一级的参数，就一个广告位id
@@ -61,26 +64,63 @@ public class TPNativeManager {
             Log.e("TradPlusLog", "adUnitId is null, please check");
             return;
         }
-        TPNative tpNative = getOrCreateNative(adUnitId, params);
 
-        if ("native_load".equals(call.method)) {
-            tpNative.loadAd();
-
-        } else if ("native_ready".equals(call.method)) {
-            boolean isReady = tpNative.getLoadedCount() > 0;
+        //原生拼接
+        if ("native_splash_load".equals(call.method)) {
+            TPNativeSplash tpSplash = getOrCreateNativeSplash(adUnitId, params);
+            tpSplash.closeAutoShow();
+            tpSplash.loadAd(adUnitId);
+        } else if ("native_splash_ready".equals(call.method)) {
+            TPNativeSplash tpSplash = getOrCreateNativeSplash(adUnitId, params);
+            boolean isReady = tpSplash.isReady();
             result.success(isReady);
-        } else if ("native_entryAdScenario".equals(call.method)) {
-            tpNative.entryAdScenario(call.argument("sceneId"));
-        } else if ("native_getLoadedCount".equals(call.method)) {
-            result.success(tpNative.getLoadedCount());
-        } else if ("native_setCustomAdInfo".equals(call.method)) {
-            tpNative.setCustomShowData(call.argument("customAdInfo"));
+        } else {
+            TPNative tpNative = getOrCreateNative(adUnitId, params);
+            if ("native_load".equals(call.method)) {
+                tpNative.loadAd();
+            } else if ("native_ready".equals(call.method)) {
+                boolean isReady = tpNative.getLoadedCount() > 0;
+                result.success(isReady);
+            } else if ("native_entryAdScenario".equals(call.method)) {
+                tpNative.entryAdScenario(call.argument("sceneId"));
+            } else if ("native_getLoadedCount".equals(call.method)) {
+                result.success(tpNative.getLoadedCount());
+            } else if ("native_setCustomAdInfo".equals(call.method)) {
+                tpNative.setCustomShowData(call.argument("customAdInfo"));
+            } else {
+                Log.e("TradPlusLog", "unknown method");
+            }
+        }
+    }
 
-        }else {
-            Log.e("TradPlusLog", "unknown method");
+
+    private TPNativeSplash getOrCreateNativeSplash(String adUnitId, Map<String, Object> params) {
+        TPNativeSplash tpNative = mTPNativeSplashs.get(adUnitId);
+        if (tpNative == null) {
+            tpNative = new TPNativeSplash(TradPlusSdk.getInstance().getActivity());
+            mTPNativeSplashs.put(adUnitId, tpNative);
+            tpNative.setAdListener(new TPNativeSplashAdListener(adUnitId));
+            tpNative.setAllAdLoadListener(new TPNativeAllAdListener(adUnitId));
+            tpNative.setDownloadListener(new TPInterstitialDownloadListener(adUnitId));
+            Log.v("TradPlus", "createNative adUnitId:" + adUnitId);
+            // 只需要设置一次的在这里设置
         }
 
+        if (params != null) {
+            HashMap<String, Object> temp = new HashMap<>();
+            if (params.containsKey("localParams")) {
+                temp = (HashMap<String, Object>) params.get("localParams");
+                Log.v("TradPlus", "map params temp = " + temp);
+                tpNative.setCustomParams(temp);
+            }
+
+            if (params.containsKey("customMap")) {
+                SegmentUtils.initPlacementCustomMap(adUnitId, (Map<String, String>) params.get("customMap"));
+            }
+        }
+        return tpNative;
     }
+
 
     private TPNative getOrCreateNative(String adUnitId, Map<String, Object> params) {
         TPNative tpNative = mTPNatives.get(adUnitId);
@@ -133,7 +173,7 @@ public class TPNativeManager {
         return true;
     }
 
-    public boolean renderView(String adUnitId, ViewGroup viewContainer, int layoutId, String adSceneId,Map<String, Object> customAdInfo) {
+    public boolean renderView(String adUnitId, ViewGroup viewContainer, int layoutId, String adSceneId, Map<String, Object> customAdInfo) {
         TPNative tpNative = mTPNatives.get(adUnitId);
         if (tpNative == null) {
             Log.v("TradPlusLog", "TPNaitve is null");
@@ -156,7 +196,25 @@ public class TPNativeManager {
         return true;
     }
 
-    public boolean renderView(String adUnitId, ViewGroup viewContainer, TPNativeAdRender adRender, String adSceneId,Map<String, Object> customAdInfo) {
+
+    public boolean renderNativeSplashView(String adUnitId, ViewGroup viewContainer) {
+        TPNativeSplash tpNative = mTPNativeSplashs.get(adUnitId);
+        if (tpNative == null) {
+            Log.v("TradPlusLog", "TPNaitve is null");
+            return false;
+        }
+        viewContainer.addView(tpNative);
+        tpNative.showAd();
+        return true;
+    }
+
+    public void removeNative(String adUnitId) {
+        mTPNativeSplashs.remove(adUnitId);
+        mTPNatives.remove(adUnitId);
+    }
+
+
+    public boolean renderView(String adUnitId, ViewGroup viewContainer, TPNativeAdRender adRender, String adSceneId, Map<String, Object> customAdInfo) {
         TPNative tpNative = mTPNatives.get(adUnitId);
         if (tpNative == null) {
             // print log
@@ -173,6 +231,7 @@ public class TPNativeManager {
         nativeAd.showAd(viewContainer, adRender, adSceneId);
         return true;
     }
+
 
     private class TPInterstitialDownloadListener implements DownloadListener {
         private String mAdUnitId;
@@ -401,5 +460,61 @@ public class TPNativeManager {
             paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
             TradPlusSdk.getInstance().sendCallBackToFlutter("native_playEnd", paramsMap);
         }
+    }
+
+
+    private class TPNativeSplashAdListener extends NativeSplashAdListener {
+        private String mAdUnitId;
+
+        TPNativeSplashAdListener(String adUnitId) {
+            mAdUnitId = adUnitId;
+        }
+
+
+        @Override
+        public void onAdLoaded(TPAdInfo tpAdInfo) {
+            Log.v("TradPlusSdk", "loaded unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
+            TradPlusSdk.getInstance().sendCallBackToFlutter("native_loaded", paramsMap);
+        }
+
+        @Override
+        public void onAdClicked(TPAdInfo tpAdInfo) {
+            Log.v("TradPlusSdk", "onAdClicked unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
+            TradPlusSdk.getInstance().sendCallBackToFlutter("native_clicked", paramsMap);
+        }
+
+        @Override
+        public void onAdClosed(TPAdInfo tpAdInfo) {
+            Log.v("TradPlusSdk", "onAdClosed unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
+            TradPlusSdk.getInstance().sendCallBackToFlutter("native_closed", paramsMap);
+        }
+
+        @Override
+        public void onAdImpression(TPAdInfo tpAdInfo) {
+            Log.v("TradPlusSdk", "onAdImpression unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
+            TradPlusSdk.getInstance().sendCallBackToFlutter("native_impression", paramsMap);
+        }
+
+        @Override
+        public void onAdLoadFailed(TPAdError tpAdError) {
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            paramsMap.put("adError", TPUtils.tpErrorToMap(tpAdError));
+            TradPlusSdk.getInstance().sendCallBackToFlutter("native_loadFailed", paramsMap);
+        }
+
+
     }
 }

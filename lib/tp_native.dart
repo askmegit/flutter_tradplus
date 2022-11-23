@@ -13,6 +13,8 @@ class TPNative
         String backgroundColorStr = '#FFFFFF',
         String textColorStr = '#000000',
         double textSize = 15,
+        bool textCenter = true,
+        int textLines = -1,
         bool isCustomClick = true}
       ) {
     return {
@@ -23,6 +25,8 @@ class TPNative
       'backgroundColorStr': backgroundColorStr,
       'textColorStr': textColorStr,
       'textSize': textSize,
+      "textLines":textLines,
+      "textCenter":textCenter,
       'isCustomClick': isCustomClick,
     };
   }
@@ -73,6 +77,29 @@ class TPNative
       'adUnitID': adUnitId
     });
   }
+
+
+  ///加载原生拼接广告：adUnitId 广告位ID, extraMap = createNativeExtraMap
+  Future<void> loadNativeSplashAd(String adUnitId,{Map? extraMap}) async{
+    Map arguments = {};
+    arguments['adUnitID'] = adUnitId;
+    if(extraMap != null)
+    {
+      arguments['extraMap'] = extraMap;
+    }
+    TradplusSdk.channel.invokeMethod('native_splash_load', arguments);
+  }
+
+  ///原生拼接广告是否ready：adUnitId 广告位ID
+  Future<bool> nativeSplashAdReady(String adUnitId) async{
+    return await TradplusSdk.channel.invokeMethod('native_splash_ready', {
+      'adUnitID': adUnitId
+    });
+  }
+
+
+
+
 
   ///获取已缓存广告数量
   Future<int> nativeLoadedCount(String adUnitId) async{
@@ -255,7 +282,7 @@ class TPNativeAdListener
   final Function(String adUnitId, Map adInfo)? onVideoPlayStart;
   final Function(String adUnitId, Map adInfo)? onVideoPlayEnd;
   final Function(String adUnitId, bool isSuccess)? onAdAllLoaded;
-  //android only 下载回调 
+  //android only 下载回调
   final Function(String adUnitId, num totalBytes,num currBytes,String fileName,String appName)? onDownloadStart;
   final Function(String adUnitId, num totalBytes,num currBytes,String fileName,String appName,int progress)? onDownloadUpdate;
   final Function(String adUnitId, num totalBytes,num currBytes,String fileName,String appName)? onDownloadPause;
