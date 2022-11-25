@@ -75,6 +75,7 @@ public class TPFlutterAdRender extends TPNativeAdRender {
             setIconView(IconView, iconClick);
 
             ImageView adLogoView = new ImageView(mContext);
+            adLogoView.setScaleType(ImageView.ScaleType.CENTER);
             boolean logoClick = TPNativeViewInfo.addToParentView(adLayout, adLogoView, (Map<String, Object>) settingParams.get(Const.Native.adLogo), -1);
             setAdChoiceView(adLogoView, logoClick);
 

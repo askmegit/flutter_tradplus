@@ -1,6 +1,13 @@
 //tradplus 国外网络配置
 def TRADPLUS_VERSION = "8.6.0.1"
 
+
+//Android国外网络集成情况
+//AdMob
+//Meta
+//Pangle
+//mintegral
+
 dependencies {
     // TradPlus
     //补充插件的引入，否则会集成失败
@@ -12,104 +19,15 @@ dependencies {
     // Admob
     implementation 'com.google.android.gms:play-services-ads:21.2.0'
     implementation 'com.tradplusad:tradplus-googlex:2.8.6.0.1'
-    // 2
+    // Meta
     implementation 'com.facebook.android:audience-network-sdk:6.11.0'
     implementation 'com.tradplusad:tradplus-facebook:1.8.6.0.1'
-    // Applovin
-    implementation 'com.applovin:applovin-sdk:11.5.0'
-    implementation 'com.tradplusad:tradplus-applovin:9.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    // Ironsource
-    implementation 'com.ironsource.sdk:mediationsdk:7.2.4.1'
-    implementation 'com.tradplusad:tradplus-ironsource:10.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-appset:16.0.0'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'com.google.android.gms:play-services-basement:17.5.0'
-    // Tapjoy
-    implementation 'com.tapjoy:tapjoy-android-sdk:12.10.0@aar'
-    implementation 'com.tradplusad:tradplus-tapjoy:6.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    // Adcolony
-    implementation 'com.adcolony:sdk:4.8.0'
-    implementation 'com.tradplusad:tradplus-adcolony:4.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
     // Pangle
     implementation 'com.tradplusad:tradplus-pangle:19.8.6.0.1'
     implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation(name: 'open_ad_sdk_V4.7.0.3', ext: 'aar')
-    // UnityAds
-    implementation 'com.tradplusad:tradplus-unity:5.8.6.0.1'
-    implementation 'com.unity3d.ads:unity-ads:4.4.0'
-    // Chartboost
-    implementation 'com.tradplusad:tradplus-chartboostx:15.8.6.0.1'
-    implementation 'com.chartboost:chartboost-sdk:9.0.0'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'com.google.android.gms:play-services-base:17.4.0'
-    // Inmobi
-    implementation 'com.tradplusad:tradplus-inmobix:23.8.6.0.1'
-    implementation 'com.inmobi.monetization:inmobi-ads:10.0.9'
-    implementation 'androidx.browser:browser:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
-    implementation 'androidx.browser:browser:1.3.0'
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    // Fyber
-    implementation 'com.fyber:marketplace-sdk:8.1.3'
-    implementation 'com.tradplusad:tradplus-fyber:24.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'com.google.android.gms:play-services-base:17.4.0'
-    // Maio
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'com.tradplusad:tradplus-maio:31.8.6.0.1'
-    implementation(name: 'maio_1.1.16', ext: 'aar')
-    // Criteo
-    implementation 'com.criteo.publisher:criteo-publisher-sdk:4.7.0'
-    implementation 'com.tradplusad:tradplus-criteo:32.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'com.google.android.gms:play-services-base:17.4.0'
-    // MyTarget
-    implementation('com.my.target:mytarget-sdk:5.15.0') {
-        exclude group: 'com.my.tracker', module: 'mytracker-sdk'
-    }
-    implementation 'com.my.tracker:mytracker-sdk:3.0.9'
-    implementation 'com.tradplusad:tradplus-mytarget:33.8.6.0.1'
-    // Ogury
-    implementation 'co.ogury:ogury-sdk:5.2.0'
-    implementation 'com.tradplusad:tradplus-ogury:34.8.6.0.1'
-    // Appnext
-    implementation 'com.tradplusad:tradplus-appnext:36.8.6.0.1'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    implementation 'androidx.annotation:annotation:1.1.0'
-    // Mandatory
-    implementation 'androidx.work:work-runtime:2.4.0'
-    // Mandatory
-    implementation 'com.github.bumptech.glide:glide:4.11.0' // Mandatory
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    // Mandatory
-    //For the Interstitial and Rewarded/Fullscreen video ad unit:
-    implementation 'com.appnext.sdk:ads:2.6.5.473'
-    //For the Banners ad unit:
-    implementation 'com.appnext.sdk:banners:2.6.5.473'
-    //For the New Native Ads ad unit:
-    implementation 'com.appnext.sdk:native-ads2:2.6.5.473'
+    implementation(name: 'open_ad_sdk_V4.7.0.3', ext:'aar')
     // Cross Promotion
     implementation 'com.tradplusad:tradplus-crosspromotion:27.8.6.0.1'
-    // Smaato
-    implementation 'com.tradplusad:tradplus-smaato:38.8.6.0.1'
-    implementation 'com.smaato.android.sdk:smaato-sdk:21.8.4'
-    implementation 'com.smaato.android.sdk:smaato-sdk-banner:21.8.4'
-    implementation 'com.smaato.android.sdk:smaato-sdk-interstitial:21.8.4'
-    implementation 'com.smaato.android.sdk:smaato-sdk-rewarded-ads:21.8.4'
-    implementation 'com.smaato.android.sdk:smaato-sdk-native:21.8.4'
-    // Huawei
-    implementation 'com.tradplusad:tradplus-huawei:41.8.6.0.1'
-    implementation 'com.huawei.hms:ads:3.4.55.300'
-    implementation 'com.huawei.hms:ads-consent:3.4.55.300'
-    // Start.io
-    implementation 'com.startapp:inapp-sdk:4.10.0'
-    implementation 'com.tradplusad:tradplus-startapp:28.8.6.0.1'
     // Mintegral
     implementation 'com.tradplusad:tradplus-mintegralx_overseas:18.8.6.0.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -120,29 +38,6 @@ dependencies {
     implementation 'com.mbridge.msdk.oversea:mbnativeadvanced:16.2.41'
     implementation 'com.mbridge.msdk.oversea:newinterstitial:16.2.41'
     implementation 'com.mbridge.msdk.oversea:mbbid:16.2.41'
-    // Superawesome
-    implementation 'com.google.android.gms:play-services-ads:21.0.0'
-    implementation 'com.tradplusad:tradplus-awesome:47.8.6.0.1'
-    implementation "tv.superawesome.sdk.publisher:superawesome:8.2.1"
-    // Kidoz
-    implementation 'com.tradplusad:tradplus-kidoz:37.8.6.0.1'
-    implementation 'org.greenrobot:eventbus:3.2.0'
-    implementation 'net.kidoz.sdk:kidoz-android-native:8.9.5'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    // Google Ad Manager
-    implementation 'com.google.android.gms:play-services-ads:21.2.0'
-    implementation 'com.tradplusad:tradplus-googlex:2.8.6.0.1'
-    // Vungle
-    implementation 'com.tradplusad:tradplus-vunglex:7.8.6.0.1'
-    implementation 'com.vungle:publisher-sdk-android:6.12.0'
-    implementation 'com.google.android.gms:play-services-basement:17.5.0'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-    // Verve
-    implementation 'net.pubnative:hybid.sdk:2.15.0'
-    implementation 'com.tradplusad:tradplus-verve:53.8.6.0.1'
-    // Yandex
-    implementation 'com.yandex.android:mobileads:5.3.0'
-    implementation 'com.tradplusad:tradplus-yandex:50.8.6.0.1'
 
 }
 

@@ -4,6 +4,25 @@ def TRADPLUS_VERSION = "8.6.0.1"
 
 def WECHAT_SDK = "com.tencent.mm.opensdk:wechat-sdk-android:+"
 
+
+
+//Android国内广告集成情况
+//
+//1、CSJ(穿山甲)，正常展示
+//2、GDT(腾讯优量汇),正常展示(需要配置对应应用下的广告ID,验证了包名)
+//3、快手,正常展示
+//4、Klevin(游可赢),正常展示
+//5、mintegral,正常展示(填充少,不确定是否跟测试模式有关)
+//
+//
+//6、sigmob,需要较多敏感权限,暂不集成
+//7、华为,只支持自家手机,且flutter sdk展示黑屏,暂时去掉,等黑屏问题解决后可集成
+//8、小米,只支持自家手机,且flutter sdk展示黑屏,暂时去掉,等黑屏问题解决后可集成
+//9、有道,只支持原生,暂不集成
+//10、百度,测试账号验证了appId,暂不清楚是否可正常显示,暂不集成
+
+
+
 dependencies {
     // TradPlus
     //补充插件的引入，否则会集成失败

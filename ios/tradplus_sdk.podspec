@@ -31,40 +31,36 @@ Tradplus SDK Flutter project.
   
   s.resources = ['TradPlusFrameworks/**/*.bundle',"Assets/**/*"]
 
+
+#   广告集成情况
+#   AdMob
+#   Meta
+#   Pangle
+#   TencentAds
+#   CSJ
+#   KuaiShou
+#   Klevin
+#   mintegral
+
   s.dependency 'TradPlusAdSDK', '8.3.20'
   s.dependency 'TradPlusAdSDK/FacebookAdapter', '8.3.20'
   s.dependency 'FBAudienceNetwork','6.11.2'
   s.dependency 'TradPlusAdSDK/AdMobAdapter', '8.3.20'
   s.dependency 'Google-Mobile-Ads-SDK','9.11.0'
-  s.dependency 'TradPlusAdSDK/UnityAdapter', '8.3.20'
-  s.dependency 'UnityAds','4.4.0'
-  s.dependency 'TradPlusAdSDK/AppLovinAdapter', '8.3.20'
-  s.dependency 'AppLovinSDK','11.5.0'
-  s.dependency 'TradPlusAdSDK/TapjoyAdapter', '8.3.20'
-  s.dependency 'TapjoySDK','12.10.0'
-  s.dependency 'TradPlusAdSDK/VungleAdapter', '8.3.20'
-  s.dependency 'VungleSDK-iOS', '6.12.0'
-  s.dependency 'TradPlusAdSDK/IronSourceAdapter', '8.3.20'
-  s.dependency 'IronSourceSDK','7.2.5.0'
-  s.dependency 'TradPlusAdSDK/AdColonyAdapter', '8.3.20'
-  s.dependency 'AdColony','4.9.0'
-  s.dependency 'TradPlusAdSDK/InMobiAdapter', '8.3.20'
-  s.dependency 'InMobiSDK/Core' ,'10.1.0'
   s.dependency 'TradPlusAdSDK/MintegralAdapter', '8.3.20'
   s.dependency 'MintegralAdSDK' ,'7.2.1'
   s.dependency 'MintegralAdSDK/All','7.2.1'
+  s.dependency 'TradPlusAdSDK/KuaiShouAdapter', '8.3.20'
+  s.dependency 'KSAdSDK', '3.3.32'
   s.dependency 'TradPlusAdSDK/GDTMobAdapter', '8.3.20'
   s.dependency 'GDTMobSDK', '4.13.90'
-  s.dependency 'TradPlusAdSDK/SmaatoAdapter', '8.3.20'
-  s.dependency 'smaato-ios-sdk', '21.7.7'
-  s.dependency 'TradPlusAdSDK/TPCrossAdapter', '8.3.20'
-  s.dependency 'TradPlusAdSDK/BaiduAdapter', '8.3.20'
-  s.dependency 'BaiduMobAdSDK','4.901'
   s.dependency 'TradPlusAdSDK/PangleAdapter', '8.3.20'
-  #穿山甲
-  s.dependency 'Ads-CN/BUAdSDK_Compatible', '4.8.0.8'
-  #Pangle
   s.dependency 'Ads-Global/BUAdSDK_Compatible', '4.7.0.6'
+  s.dependency 'TradPlusAdSDK/KlevinAdapter', '8.3.20'
+  s.dependency 'KlevinAdSDK','2.9.1.207'
+  s.dependency 'TradPlusAdSDK/TPCrossAdapter', '8.3.20'
+  s.dependency 'TradPlusAdSDK/PangleAdapter', '8.3.20'
+  s.dependency 'Ads-CN/BUAdSDK_Compatible', '4.8.0.8'
 
 
   s.pod_target_xcconfig = { 'VALID_ARCHS' => 'x86_64 armv7 arm64' }

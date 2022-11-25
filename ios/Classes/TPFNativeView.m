@@ -19,6 +19,8 @@
     NSString *sceneId;
     TradPlusAdNativeObject *nativeObject;
     NSDictionary *customAdInfo;
+    CGRect parentFrame;
+    BOOL isNativeSplash;
 }
 
 @end
@@ -38,6 +40,8 @@
       width = [args[@"width"] floatValue];
       sceneId = args[@"sceneId"];
       customAdInfo = args[@"customAdInfo"];
+      parentFrame = frame;
+      isNativeSplash = args[@"isNativeSplash"];
   }
   return self;
 }
@@ -163,6 +167,23 @@
     }
     NSInteger textSize = [viewInfo[@"textSize"] integerValue];
     label.font = [UIFont systemFontOfSize:textSize];
+    
+    ///文字行数
+    NSInteger textLines = [viewInfo[@"textLines"] integerValue];
+    if(textLines > 0 ) {
+        label.numberOfLines = textLines ;
+    }else{
+        label.numberOfLines = 0 ;
+    }
+    
+    ///文字是否居中
+    BOOL textCenter = [viewInfo[@"textCenter"] boolValue];
+    
+    if(textCenter == YES){
+        label.textAlignment = NSTextAlignmentCenter;
+    }
+    
+  
 }
 
 - (void)setupView:(UIView *)view viewInfo:(NSDictionary *)viewInfo
