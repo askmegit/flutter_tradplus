@@ -33,7 +33,7 @@ public class TPNativeAdView implements PlatformView {
             String layoutName = (String) args.get("layoutName");
 
             String adSceneId = (String) args.get("adSceneId");
-            Map<String, Object> customAdInfo = (Map<String, Object>) args.get("customAdInfo");
+            Map<String, Object> customAdInfo = (Map<String, Object>)args.get("customAdInfo");
             Map<String, Object> extraMap = (Map<String, Object>) args.get("extraMap");
 
             if (TextUtils.isEmpty(adUnitId)) {
@@ -44,17 +44,9 @@ public class TPNativeAdView implements PlatformView {
             // create containerView
             ViewGroup viewGroup = new FrameLayout(TradPlusSdk.getInstance().getActivity());
 
-
-            boolean isNativeSplash = (boolean) args.get("isNativeSplash");
-
-            if (isNativeSplash) {
-                boolean isSuccess = TPNativeManager.getInstance().renderNativeSplashView(adUnitId, viewGroup);
-                if (!isSuccess) {
-                    Log.v("TradPlusLog", "Native render failed");
-                }
-            } else if (!TextUtils.isEmpty(layoutName)) {
+            if (!TextUtils.isEmpty(layoutName)) {
                 int layoutId = TPUtils.getLayoutIdByName(TradPlusSdk.getInstance().getActivity(), layoutName);
-                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, layoutId, adSceneId, customAdInfo);
+                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, layoutId, adSceneId,customAdInfo);
                 if (!isSuccess) {
                     Log.v("TradPlusLog", "Native render failed");
 
@@ -63,7 +55,7 @@ public class TPNativeAdView implements PlatformView {
 
             if (extraMap != null && extraMap.containsKey("parent")) {
                 TPNativeAdRender adRender = new TPFlutterAdRender(extraMap);
-                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, adRender, adSceneId, customAdInfo);
+                boolean isSuccess = TPNativeManager.getInstance().renderView(adUnitId, viewGroup, adRender, adSceneId,customAdInfo);
                 if (!isSuccess) {
                     Log.v("TradPlusLog", "Native render failed");
 

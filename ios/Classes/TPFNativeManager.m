@@ -38,18 +38,6 @@
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result
 {
     NSString *adUnitID = call.arguments[@"adUnitID"];
-    
-    
-    ///原生拼接开屏
-    if([@"native_splash_load" isEqualToString:call.method])
-    {
-    
-    }else if([@"native_splash_ready" isEqualToString:call.method])
-    {
-        [self isAdReadyWithAdUnitID:adUnitID result:result];
-    }
-    
-    
     if([@"native_load" isEqualToString:call.method])
     {
         [self loadAdWithAdUnitID:adUnitID methodCall:call];
@@ -133,8 +121,6 @@
         }
     }
 }
-
-
 
 - (void)isAdReadyWithAdUnitID:(NSString *)adUnitID result:(FlutterResult)result;
 {

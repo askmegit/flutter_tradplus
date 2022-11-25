@@ -19,8 +19,6 @@
     NSString *sceneId;
     TradPlusAdNativeObject *nativeObject;
     NSDictionary *customAdInfo;
-    CGRect parentFrame;
-    BOOL isNativeSplash;
 }
 
 @end
@@ -40,8 +38,6 @@
       width = [args[@"width"] floatValue];
       sceneId = args[@"sceneId"];
       customAdInfo = args[@"customAdInfo"];
-      parentFrame = frame;
-      isNativeSplash = args[@"isNativeSplash"];
   }
   return self;
 }

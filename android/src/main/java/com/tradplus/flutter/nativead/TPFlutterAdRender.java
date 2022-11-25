@@ -1,13 +1,18 @@
 package com.tradplus.flutter.nativead;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tradplus.ads.base.GlobalTradPlus;
+import com.tradplus.ads.base.adapter.nativead.TPNativeAdView;
 import com.tradplus.ads.open.nativead.TPNativeAdRender;
 import com.tradplus.flutter.Const;
 import com.tradplus.flutter.TPUtils;
@@ -75,7 +80,6 @@ public class TPFlutterAdRender extends TPNativeAdRender {
             setIconView(IconView, iconClick);
 
             ImageView adLogoView = new ImageView(mContext);
-            adLogoView.setScaleType(ImageView.ScaleType.CENTER);
             boolean logoClick = TPNativeViewInfo.addToParentView(adLayout, adLogoView, (Map<String, Object>) settingParams.get(Const.Native.adLogo), -1);
             setAdChoiceView(adLogoView, logoClick);
 
