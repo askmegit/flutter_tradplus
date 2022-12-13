@@ -12,6 +12,9 @@ export 'package:tradplus_sdk/tp_listener.dart';
 import 'package:tradplus_sdk/tp_listener.dart';
 import 'package:flutter/services.dart';
 
+export 'ad/ad.dart';
+
+
 final TPSDKManager = TradplusSdk();
 
 class TradplusSdk {
