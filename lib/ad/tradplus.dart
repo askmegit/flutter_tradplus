@@ -344,7 +344,7 @@ class Tradplus extends AdProvider {
       ///原生广告
       Map? extraMap;
       if (config is NativeAdConfig) {
-        extraMap = TPNativeManager.createNativeExtraMap(isAutoLoad: config.isAutoLoad, templateHeight: config.width, templateWidth: config.height);
+        extraMap = TPNativeManager.createNativeExtraMap( templateHeight: config.width, templateWidth: config.height);
       }
       await TPNativeManager.loadNativeAd(adUnitId, extraMap: extraMap);
       return;
@@ -354,7 +354,7 @@ class Tradplus extends AdProvider {
       ///激励视频
       Map? extraMap;
       if (config is RewardAdConfig) {
-        extraMap = TPRewardVideoManager.createRewardVideoExtraMap(isAutoLoad: config.isAutoLoad);
+        extraMap = TPRewardVideoManager.createRewardVideoExtraMap();
       }
       await TPRewardVideoManager.loadRewardVideoAd(adUnitId, extraMap: extraMap);
       return;

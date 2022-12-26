@@ -14,10 +14,6 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
-        //gradle plugin 4.x
-        flatDir {
-            dirs project(':tradplus_sdk').file('libs')
-        }
         google()
         mavenCentral()
         // TradPlus
