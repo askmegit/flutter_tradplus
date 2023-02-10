@@ -89,7 +89,7 @@ public class TPOfferWallManager {
     private TPOfferWall getOrCreateOfferWall(String adUnitId, Map<String, Object> params) {
         TPOfferWall tpOfferWall = mTPOfferWall.get(adUnitId);
         if (tpOfferWall == null) {
-            tpOfferWall = new TPOfferWall(TradPlusSdk.getInstance().getActivity(), adUnitId,isAutoLoad(params));
+            tpOfferWall = new TPOfferWall(TradPlusSdk.getInstance().getActivity(), adUnitId);
             mTPOfferWall.put(adUnitId, tpOfferWall);
             tpOfferWall.setAdListener(new TPOfferWallManager.TPOfferWallAdListener(adUnitId));
             tpOfferWall.setAllAdLoadListener(new TPOfferWallManager.TPOfferWallAllAdListener(adUnitId));
@@ -116,14 +116,6 @@ public class TPOfferWallManager {
         }
 
         return tpOfferWall;
-    }
-
-    private boolean isAutoLoad(Map<String, Object> params){
-        if (params != null && params.containsKey("isAutoLoad")) {
-            return (boolean) params.get("isAutoLoad");
-        }
-
-        return true;
     }
 
 
@@ -330,6 +322,14 @@ public class TPOfferWallManager {
             paramsMap.put("adError", TPUtils.tpErrorToMap(tpAdError));
             paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
             TradPlusSdk.getInstance().sendCallBackToFlutter("offerwall_bidEnd", paramsMap);
+        }
+
+        @Override
+        public void onAdIsLoading(String s) {
+            Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            TradPlusSdk.getInstance().sendCallBackToFlutter("offerwall_isLoading", paramsMap);
         }
     }
 

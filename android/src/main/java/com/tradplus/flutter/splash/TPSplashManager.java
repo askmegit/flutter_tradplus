@@ -290,6 +290,14 @@ public class TPSplashManager  {
             paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
             TradPlusSdk.getInstance().sendCallBackToFlutter("splash_bidEnd", paramsMap);
         }
+
+        @Override
+        public void onAdIsLoading(String s) {
+            Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            TradPlusSdk.getInstance().sendCallBackToFlutter("splash_isLoading", paramsMap);
+        }
     }
     private class TPSplashAdListener extends SplashAdListener {
         private String mAdUnitId;

@@ -81,7 +81,7 @@ public class TPInterstitialManager {
 
         TPInterstitial tpInterstitial = mTPInterstitals.get(adUnitId);
         if (tpInterstitial == null) {
-            tpInterstitial = new TPInterstitial(TradPlusSdk.getInstance().getActivity(), adUnitId,isAutoLoad(params));
+            tpInterstitial = new TPInterstitial(TradPlusSdk.getInstance().getActivity(), adUnitId);
             mTPInterstitals.put(adUnitId, tpInterstitial);
             tpInterstitial.setAdListener(new TPInterstitialAdListener(adUnitId));
             tpInterstitial.setAllAdLoadListener(new TPInterstitialAllAdListener(adUnitId));
@@ -109,14 +109,6 @@ public class TPInterstitialManager {
 
 
         return tpInterstitial;
-    }
-
-    private boolean isAutoLoad(Map<String, Object> params){
-        if (params != null && params.containsKey("isAutoLoad")) {
-            return (boolean) params.get("isAutoLoad");
-        }
-
-        return true;
     }
 
 
@@ -271,6 +263,14 @@ public class TPInterstitialManager {
             paramsMap.put("adError", TPUtils.tpErrorToMap(tpAdError));
             paramsMap.put("adInfo", TPUtils.tpAdInfoToMap(tpAdInfo));
             TradPlusSdk.getInstance().sendCallBackToFlutter("interstitial_bidEnd", paramsMap);
+        }
+
+        @Override
+        public void onAdIsLoading(String s) {
+            Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
+            final Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put("adUnitID", mAdUnitId);
+            TradPlusSdk.getInstance().sendCallBackToFlutter("interstitial_isLoading", paramsMap);
         }
     }
     private class TPInterstitialAdListener implements InterstitialAdListener {
