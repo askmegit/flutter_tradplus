@@ -50,32 +50,32 @@ dependencies {
     implementation 'com.tradplusad:tradplus-klevin:44.9.0.0.1'
     implementation 'com.tradplusad:klevin-ads:2.11.0.3'
     // Mintegral
-    implementation 'com.tradplusad:tradplus-mintegralx_cn:18.9.0.0.1'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    //从16.1.7开始 MTG会自动打入微信小程序open sdk会和腾讯广点通SDK有冲突，所以做exclude移除处理
-    //如果需要使用微信小程序跳转功能，需要手动引入
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:+'
-    implementation ("com.mbridge.msdk.china:reward:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
-    implementation ("com.mbridge.msdk.china:mbsplash:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
-    implementation ("com.mbridge.msdk.china:mbbanner:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
-    implementation ("com.mbridge.msdk.china:mbnative:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
-    implementation ("com.mbridge.msdk.china:mbnativeadvanced:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
-    implementation ("com.mbridge.msdk.china:newinterstitial:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
-    implementation ("com.mbridge.msdk.china:mbbid:16.3.12"){
-        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
-    }
+//    implementation 'com.tradplusad:tradplus-mintegralx_cn:18.9.0.0.1'
+//    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+//    //从16.1.7开始 MTG会自动打入微信小程序open sdk会和腾讯广点通SDK有冲突，所以做exclude移除处理
+//    //如果需要使用微信小程序跳转功能，需要手动引入
+//    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:+'
+//    implementation ("com.mbridge.msdk.china:reward:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
+//    implementation ("com.mbridge.msdk.china:mbsplash:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
+//    implementation ("com.mbridge.msdk.china:mbbanner:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
+//    implementation ("com.mbridge.msdk.china:mbnative:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
+//    implementation ("com.mbridge.msdk.china:mbnativeadvanced:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
+//    implementation ("com.mbridge.msdk.china:newinterstitial:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
+//    implementation ("com.mbridge.msdk.china:mbbid:16.3.12"){
+//        exclude group: "com.tencent.mm.opensdk", module: "wechat-sdk-android"
+//    }
 
 }
 

@@ -52,9 +52,9 @@ rootProject.allprojects {
         maven {
             url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea"
         }
-        maven {
-            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_china"
-        }
+//        maven {
+//            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_china"
+//        }
         // Superawesome
         maven { url "https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo" }
         // Verve
