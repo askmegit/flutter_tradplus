@@ -35,9 +35,9 @@ dependencies {
     implementation 'com.tradplusad:tradplus-toutiao:17.9.0.0.1'
     implementation 'com.pangle.cn:ads-sdk-pro:4.9.0.8'
     // Tencent Ads
-    implementation 'com.tradplusad:tradplus-txadnet:16.9.0.0.1'
-    implementation 'com.qq.e.union:union:4.500.1370'
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:+'
+//    implementation 'com.tradplusad:tradplus-txadnet:16.9.0.0.1'
+//    implementation 'com.qq.e.union:union:4.500.1370'
+//    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:+'
     // Cross Promotion
     implementation 'com.tradplusad:tradplus-crosspromotion:27.9.0.0.1'
     //国内需要同时引入
