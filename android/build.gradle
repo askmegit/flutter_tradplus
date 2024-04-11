@@ -99,7 +99,7 @@ if (isReleaseOnGP as int == 0) {
     printFileContent("tradplus_gp.gradle")
     apply from: "tradplus_gp.gradle"
 } else {
-    project.logger.error('当前集成广告源:国外')
+    project.logger.error('当前集成广告源:国内')
     project.logger.error("集成广告源如下(打印信息,非错误)")
     printFileContent("tradplus_cn.gradle")
     apply from: "tradplus_cn.gradle"
