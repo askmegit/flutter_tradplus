@@ -56,7 +56,6 @@ Tradplus SDK Flutter project.
   s.dependency 'TradPlusAdSDK/GDTMobAdapter', '8.7.0'
   s.dependency 'GDTMobSDK', '4.14.02'
   s.dependency 'TradPlusAdSDK/PangleAdapter', '8.7.0'
-  s.dependency 'Ads-Global/BUAdSDK_Compatible', '4.8.1.0'
   s.dependency 'TradPlusAdSDK/KlevinAdapter', '8.7.0'
   s.dependency 'KlevinAdSDK','2.11.0.215'
   s.dependency 'TradPlusAdSDK/TPCrossAdapter', '8.7.0'
