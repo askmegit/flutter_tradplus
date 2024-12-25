@@ -77,8 +77,8 @@
         interstitial = [[TPFInterstitial alloc] init];
         self.interstitialAds[adUnitID] = interstitial;
     }
-    [interstitial setAdUnitID:adUnitID];
     NSDictionary *extraMap = call.arguments[@"extraMap"];
+    CGFloat maxWaitTime = 0;
     if(extraMap != nil)
     {
         id customMap = extraMap[@"customMap"];
@@ -86,8 +86,20 @@
         {
             [interstitial setCustomMap:customMap];
         }
+        id localParams = extraMap[@"localParams"];
+        if(localParams != nil && [localParams isKindOfClass:[NSDictionary class]])
+        {
+            [interstitial setLocalParams:localParams];
+        }
+        BOOL openAutoLoadCallback = [extraMap[@"openAutoLoadCallback"] boolValue];
+        if(openAutoLoadCallback)
+        {
+            [interstitial openAutoLoadCallback];
+        }
+        maxWaitTime = [extraMap[@"maxWaitTime"] floatValue];
     }
-    [interstitial loadAd];
+    [interstitial setAdUnitID:adUnitID];
+    [interstitial loadAdWithMaxWaitTime:maxWaitTime];
 }
 
 - (void)isAdReadyWithAdUnitID:(NSString *)adUnitID result:(FlutterResult)result

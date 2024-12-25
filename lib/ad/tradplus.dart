@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
-import 'ad.dart';
 
 _print(Object object) {
   if (kDebugMode) {
@@ -32,13 +32,6 @@ class Tradplus extends AdProvider {
   ///[adUnitId]广告单元ID
   String _taskId(AdOp op, AdType type, String adUnitId) {
     return op.name + "_" + type.name + "_" + adUnitId;
-  }
-
-  ///设置测试模式
-  void setTestMode({String? testId}) {
-    if (kDebugMode && Platform.isAndroid) {
-      TPSDKManager.setTestDevice(true, testModeId: testId);
-    }
   }
 
   ///完成任务
@@ -193,7 +186,8 @@ class Tradplus extends AdProvider {
 
   ///通知广告展示失败
   void _notifyOnAdShowFailed(String adUnitId, dynamic adInfo, dynamic error) {
-    AdListenerManager.getAdListener(adUnitId)?.onAdShowFailed(adUnitId, adInfo, error);
+    AdListenerManager.getAdListener(adUnitId)
+        ?.onAdShowFailed(adUnitId, adInfo, error);
   }
 
   ///通知广告关闭
@@ -209,7 +203,9 @@ class Tradplus extends AdProvider {
 
   ///通知获取激励
   void _notifyOnAdReward(String adUnitId, dynamic adInfo) {
-    AdListenerManager.getAdListener(adUnitId)?.onAdReward?.call(adUnitId, adInfo);
+    AdListenerManager.getAdListener(adUnitId)
+        ?.onAdReward
+        ?.call(adUnitId, adInfo);
   }
 
   ///设置开屏广告监听
@@ -304,7 +300,8 @@ class Tradplus extends AdProvider {
   }
 
   @override
-  Future<AdLoadStatus> loadAd(AdType adType, String adUnitId, {AdConfig? config}) async {
+  Future<AdLoadStatus> loadAd(AdType adType, String adUnitId,
+      {AdConfig? config}) async {
     bool isReady = await isAdReady(adType, adUnitId);
     if (isReady) {
       return AdLoadStatus.Loaded;
@@ -328,11 +325,13 @@ class Tradplus extends AdProvider {
   }
 
   ///根据类型加载广告
-  Future<void> _loadAdByType(AdType adType, String adUnitId, {AdConfig? config}) async {
+  Future<void> _loadAdByType(AdType adType, String adUnitId,
+      {AdConfig? config}) async {
     if (adType == AdType.Splash) {
       Map? extraMap;
       if (config is SplashAdConfig && config.iOSBottomLayoutNib != null) {
-        extraMap = TPSplashManager.createSplashExtraMap(customMap: {"bottom_layout_nib": config.iOSBottomLayoutNib});
+        extraMap = TPSplashManager.createSplashExtraMap(
+            customMap: {"bottom_layout_nib": config.iOSBottomLayoutNib});
       }
 
       ///开屏广告
@@ -344,7 +343,8 @@ class Tradplus extends AdProvider {
       ///原生广告
       Map? extraMap;
       if (config is NativeAdConfig) {
-        extraMap = TPNativeManager.createNativeExtraMap( templateHeight: config.width, templateWidth: config.height);
+        extraMap = TPNativeManager.createNativeExtraMap(
+            templateHeight: config.width, templateWidth: config.height);
       }
       await TPNativeManager.loadNativeAd(adUnitId, extraMap: extraMap);
       return;
@@ -356,7 +356,8 @@ class Tradplus extends AdProvider {
       if (config is RewardAdConfig) {
         extraMap = TPRewardVideoManager.createRewardVideoExtraMap();
       }
-      await TPRewardVideoManager.loadRewardVideoAd(adUnitId, extraMap: extraMap);
+      await TPRewardVideoManager.loadRewardVideoAd(adUnitId,
+          extraMap: extraMap);
       return;
     }
 
@@ -364,7 +365,8 @@ class Tradplus extends AdProvider {
     if (adType == AdType.Banner) {
       Map? extraMap;
       if (config is BannerAdConfig) {
-        extraMap = TPBannerManager.createBannerExtraMap(width: config.width, height: config.height);
+        extraMap = TPBannerManager.createBannerExtraMap(
+            width: config.width, height: config.height);
       }
       await TPBannerManager.loadBannerAd(adUnitId, extraMap: extraMap);
       return;
@@ -400,7 +402,8 @@ class Tradplus extends AdProvider {
   }
 
   @override
-  Future<bool> showSplashAd(BuildContext context, String adUnitId, {SplashAdConfig? adConfig}) async {
+  Future<bool> showSplashAd(BuildContext context, String adUnitId,
+      {SplashAdConfig? adConfig}) async {
     bool isReady = await isAdReady(AdType.Splash, adUnitId);
 
     if (isReady) {
@@ -423,7 +426,8 @@ class Tradplus extends AdProvider {
                   return WillPopScope(
                       onWillPop: () async => false,
                       child: Scaffold(
-                          backgroundColor: adConfig?.backgroundColor ?? Colors.transparent,
+                          backgroundColor:
+                              adConfig?.backgroundColor ?? Colors.transparent,
                           body: Column(
                             children: [
                               Expanded(
@@ -444,7 +448,8 @@ class Tradplus extends AdProvider {
         });
       } else {
         ///iOS是跳转到其它页面
-        await TPSplashManager.showSplashAd(adUnitId, className: customLayoutClassName ?? "");
+        await TPSplashManager.showSplashAd(adUnitId,
+            className: customLayoutClassName ?? "");
       }
       bool show = await completer.future ?? false;
       _removeTask(taskId);
@@ -468,12 +473,15 @@ class Tradplus extends AdProvider {
         var attr = item.attr;
         extraMap[item.name] = attr.toMap();
       }
-      return TPNativeViewWidget(adUnitId, config.width, config.height, extraMap: extraMap);
+      return TPNativeViewWidget(adUnitId, config.width, config.height,
+          extraMap: extraMap);
     }
 
     ///使用tradplus的渲染模板
-    String layoutName = config?.customLayoutClassName ?? (Platform.isIOS ? "TPNativeTemplate" : "tp_native_ad_list_item");
-    return TPNativeViewWidget(adUnitId, config?.width, config?.height, className: layoutName);
+    String layoutName = config?.customLayoutClassName ??
+        (Platform.isIOS ? "TPNativeTemplate" : "tp_native_ad_list_item");
+    return TPNativeViewWidget(adUnitId, config?.width, config?.height,
+        className: layoutName);
   }
 
   @override

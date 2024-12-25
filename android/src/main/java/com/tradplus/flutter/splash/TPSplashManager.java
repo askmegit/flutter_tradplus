@@ -8,20 +8,16 @@ import androidx.annotation.NonNull;
 import com.tradplus.ads.base.bean.TPAdError;
 import com.tradplus.ads.base.bean.TPAdInfo;
 import com.tradplus.ads.base.bean.TPBaseAd;
-import com.tradplus.ads.common.serialization.JSON;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.common.util.LogUtil;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
 import com.tradplus.ads.open.DownloadListener;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
-import com.tradplus.ads.open.banner.TPBanner;
-import com.tradplus.ads.open.interstitial.InterstitialAdListener;
-import com.tradplus.ads.open.interstitial.TPInterstitial;
 import com.tradplus.ads.open.nativead.TPNativeAdRender;
 import com.tradplus.ads.open.splash.SplashAdListener;
 import com.tradplus.ads.open.splash.TPSplash;
 import com.tradplus.flutter.TPUtils;
 import com.tradplus.flutter.TradPlusSdk;
-import com.tradplus.flutter.interstitial.TPInterstitialManager;
+import com.tradplus.ads.base.common.TPTaskManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +40,7 @@ public class TPSplashManager  {
     }
     // 保存广告位对象
     private Map<String, TPSplash> mTPSplashs = new ConcurrentHashMap<>();
-
+    private String sceneId;
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         // 第一级的参数，就一个广告位id
         String adUnitId = call.argument("adUnitID");
@@ -58,11 +54,15 @@ public class TPSplashManager  {
         TPSplash tpSplash = getOrCreateSplash(adUnitId, params);
 
         if ("splash_load".equals(call.method)) {
-            tpSplash.loadAd(null);
+            tpSplash.loadAd(null,getMaxWaitTime(params));
 
         }  else if ("splash_ready".equals(call.method)) {
             boolean isReady = tpSplash.isReady();
             result.success(isReady);
+
+        }  else if ("splash_entryAdScenario".equals(call.method)) {
+            sceneId = call.argument("sceneId");
+            tpSplash.entryAdScenario(sceneId);
 
         } else if ("splash_show".equals(call.method)) {
             Log.i("TradPlusLog","please create the Widget to show Splash View");
@@ -76,14 +76,26 @@ public class TPSplashManager  {
 
     }
 
+    private float getMaxWaitTime(Map<String, Object> params){
+        try {
+            if(params.containsKey("maxWaitTime")) {
+                return  new Double((double) params.get("maxWaitTime")).floatValue();
+            }
+        }catch (Throwable throwable){
+            return 0;
+        }
+
+        return 0;
+    }
+
     private TPSplash getOrCreateSplash(String adUnitId, Map<String, Object> params) {
         TPSplash tpSplash = mTPSplashs.get(adUnitId);
         if (tpSplash == null) {
             tpSplash = new TPSplash(TradPlusSdk.getInstance().getActivity(), adUnitId);
             mTPSplashs.put(adUnitId, tpSplash);
-            tpSplash.setAdListener(new TPSplashManager.TPSplashAdListener(adUnitId));
-            tpSplash.setAllAdLoadListener(new TPSplashManager.TPSplashAllAdListener(adUnitId));
-            tpSplash.setDownloadListener(new TPSplashManager.TPSplashDownloadListener(adUnitId));
+            tpSplash.setAdListener(new TPSplashAdListener(adUnitId));
+            tpSplash.setAllAdLoadListener(new TPSplashAllAdListener(adUnitId));
+            tpSplash.setDownloadListener(new TPSplashDownloadListener(adUnitId));
             Log.v("TradPlus", "createSplash adUnitId:" + adUnitId);
 
             // 只需要设置一次的在这里设置
@@ -103,13 +115,18 @@ public class TPSplashManager  {
             if (params.containsKey("customMap")) {
                 SegmentUtils.initPlacementCustomMap(adUnitId, (Map<String, String>) params.get("customMap"));
             }
+
+            if(params.containsKey("openAutoLoadCallback")) {
+                boolean openAutoLoadCallback = (boolean) params.get("openAutoLoadCallback");
+                tpSplash.setAutoLoadCallback(openAutoLoadCallback);
+            }
         }
 
 
         return tpSplash;
     }
 
-    public boolean renderView(String adUnitId, ViewGroup viewContainer, String adSceneId, TPNativeAdRender tpNativeAdRender) {
+    public boolean renderView(String adUnitId, ViewGroup viewContainer, TPNativeAdRender tpNativeAdRender) {
         TPSplash tpSplash = mTPSplashs.get(adUnitId);
 
         if(tpSplash == null){
@@ -125,8 +142,7 @@ public class TPSplashManager  {
         if(tpNativeAdRender != null) {
             tpSplash.setNativeAdRender(tpNativeAdRender);
         }
-
-        tpSplash.showAd(viewContainer);
+        tpSplash.showAd(viewContainer,sceneId);
 
         if(viewContainer.getChildCount() <= 0) {
             return false;
@@ -294,9 +310,14 @@ public class TPSplashManager  {
         @Override
         public void onAdIsLoading(String s) {
             Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
-            final Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put("adUnitID", mAdUnitId);
-            TradPlusSdk.getInstance().sendCallBackToFlutter("splash_isLoading", paramsMap);
+            TPTaskManager.getInstance().runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Map<String, Object> paramsMap = new HashMap<>();
+                    paramsMap.put("adUnitID", mAdUnitId);
+                    TradPlusSdk.getInstance().sendCallBackToFlutter("splash_isLoading", paramsMap);
+                }
+            });
         }
     }
     private class TPSplashAdListener extends SplashAdListener {

@@ -3,6 +3,9 @@ version '1.0'
 
 buildscript {
     repositories {
+        flatDir {
+            dirs 'libs'
+        }
         google()
         mavenCentral()
     }
@@ -14,6 +17,9 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
+        flatDir {
+            dirs 'libs'
+        }
         google()
         mavenCentral()
         // TradPlus
@@ -106,7 +112,7 @@ if (isReleaseOnGP as int == 0) {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -114,7 +120,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 23
         buildTypes {
             release {
                 consumerProguardFiles 'consumer-rules.pro'
@@ -126,4 +132,12 @@ android {
     }
 }
 
+def TRADPLUS_VERSION = "12.3.0.1"
 
+dependencies {
+    //TradPlus
+    compileOnly "com.tradplusad:tradplus:${TRADPLUS_VERSION}"
+    compileOnly 'com.quality-ad:uid2-adapter:1.0.0'
+    compileOnly 'com.tradplusad:tradplus-tool:1.1.0'
+
+}

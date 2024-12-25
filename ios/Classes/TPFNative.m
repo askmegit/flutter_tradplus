@@ -20,7 +20,6 @@
 {
     self = [super init];
     if (self) {
-        [TradPlus setLogLevel:MSLogLevelOff];
         self.native = [[TradPlusAdNative alloc] init];
         self.native.delegate = self;
     }
@@ -39,16 +38,22 @@
     [self.native setAdUnitID:adUnitID];
 }
 
-- (void)loadAd
+- (void)loadAdWithMaxWaitTime:(NSTimeInterval)maxWaitTime
 {
     MSLogTrace(@"%s", __PRETTY_FUNCTION__);
-    [self.native loadAd];
+    [self.native loadAdWithMaxWaitTime:maxWaitTime];
 }
 
-- (void)loadAds:(NSInteger)adsCount
+- (void)loadAds:(NSInteger)adsCount maxWaitTime:(NSTimeInterval)maxWaitTime
 {
     MSLogTrace(@"%s %ld", __PRETTY_FUNCTION__,(long)adsCount);
-    [self.native loadAds:adsCount];
+    [self.native loadAds:adsCount maxWaitTime:maxWaitTime];
+}
+
+- (void)openAutoLoadCallback
+{
+    MSLogTrace(@"%s", __PRETTY_FUNCTION__);
+    [self.native openAutoLoadCallback];
 }
 
 - (TradPlusAdNativeObject *)getReadyNativeObject
@@ -101,6 +106,12 @@
 {
     MSLogTrace(@"%s", __PRETTY_FUNCTION__);
     self.native.customAdInfo = customAdInfo;
+}
+
+- (void)setLocalParams:(NSDictionary *)dic
+{
+    self.native.localParams = dic;
+    MSLogTrace(@"%s dic:%@", __PRETTY_FUNCTION__,dic);
 }
 
 - (NSString *)eventName:(NSString *)event

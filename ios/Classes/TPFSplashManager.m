@@ -53,6 +53,24 @@
     {
         [self setCustomAdInfoWithAdUnitID:adUnitID methodCall:call];
     }
+    else if([@"splash_entryAdScenario" isEqualToString:call.method])
+    {
+        [self entryAdScenarioWithAdUnitID:adUnitID methodCall:call];
+    }
+}
+
+- (void)entryAdScenarioWithAdUnitID:(NSString *)adUnitID methodCall:(FlutterMethodCall*)call
+{
+    TPFSplash *splash = [self getSplashWithAdUnitID:adUnitID];
+    NSString *sceneId = call.arguments[@"sceneId"];
+    if(splash != nil)
+    {
+        [splash entryAdScenario:sceneId];
+    }
+    else
+    {
+        MSLogInfo(@"splash adUnitID:%@ not initialize",adUnitID);
+    }
 }
 
 - (TPFSplash *)getSplashWithAdUnitID:(NSString *)adUnitID
@@ -69,12 +87,11 @@
     TPFSplash *splash = [self getSplashWithAdUnitID:adUnitID];
     if(splash == nil)
     {
-        
         splash = [[TPFSplash alloc] init];
-        [splash setAdUnitID:adUnitID];
         self.splashAds[adUnitID] = splash;
     }
     NSDictionary *extraMap = call.arguments[@"extraMap"];
+    CGFloat maxWaitTime = 0;
     if(extraMap != nil)
     {
         id customMap = extraMap[@"customMap"];
@@ -82,8 +99,20 @@
         {
             [splash setCustomMap:customMap];
         }
+        id localParams = extraMap[@"localParams"];
+        if(localParams != nil && [localParams isKindOfClass:[NSDictionary class]])
+        {
+            [splash setLocalParams:localParams];
+        }
+        BOOL openAutoLoadCallback = [extraMap[@"openAutoLoadCallback"] boolValue];
+        if(openAutoLoadCallback)
+        {
+            [splash openAutoLoadCallback];
+        }
+        maxWaitTime = [extraMap[@"maxWaitTime"] floatValue];
     }
-    [splash loadAd];
+    [splash setAdUnitID:adUnitID];
+    [splash loadAdWithMaxWaitTime:maxWaitTime];
 }
 
 - (void)isAdReadyWithAdUnitID:(NSString *)adUnitID result:(FlutterResult)result
@@ -108,7 +137,8 @@
     if(splash != nil)
     {
         NSString *className = call.arguments[@"className"];
-        [splash showAdWithClassName:className];
+        NSString *sceneId = call.arguments[@"sceneId"];
+        [splash showAdWithClassName:className sceneId:sceneId];
     }
     else
     {

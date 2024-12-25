@@ -1,15 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
+
+import 'banner.dart';
 import 'configure.dart';
+import 'interactive.dart';
 import 'interstitial.dart';
 import 'native.dart';
+import 'offerwall.dart';
+import 'other.dart';
+import 'privacy.dart';
 import 'rewardVideo.dart';
 import 'splash.dart';
-import 'banner.dart';
-import 'offerwall.dart';
-import 'privacy.dart';
-import 'other.dart';
 import 'splash_iOS.dart';
 
 void main() {
@@ -32,15 +34,20 @@ class _MyAppState extends State<MyApp> {
     "开屏",
     "积分墙",
     "隐私设置",
-    "测试设置"
+    "测试设置",
+    "互动"
   ];
   static TPInitListener? listener;
   static TPGlobalAdImpressionListener? globalAdImpressionListener;
   String appId = TPAdConfiguration.appId;
+  int itemCount = 9;
 
   @override
   void initState() {
     super.initState();
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      itemCount = 8;
+    }
     initTPSDK();
   }
 
@@ -53,11 +60,12 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: ListView.builder(
-            itemCount: listTitle.length,
-            itemExtent: 80,
+            itemCount: itemCount,
+            itemExtent: 90,
             itemBuilder: (BuildContext context, int index) {
               return ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white70),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                 onPressed: () {
                   var widget;
                   switch (index) {
@@ -103,6 +111,14 @@ class _MyAppState extends State<MyApp> {
                     case 7:
                       {
                         widget = OtherWidget();
+                        break;
+                      }
+                    case 8:
+                      {
+                        if (defaultTargetPlatform == TargetPlatform.android) {
+                          widget = InterActiveWidget();
+                        }
+                        widget = InterActiveWidget();
                         break;
                       }
                   }
@@ -178,17 +194,15 @@ class _MyAppState extends State<MyApp> {
         "sub_channel": "tp_sub_channel"
       };
       TPSDKManager.setCustomMap(customMap);
-      TPSDKManager.setTestDevice(TPAdConfiguration.testDevice);
     }
 
     TPSDKManager.checkCurrentArea();
     TPSDKManager.init(appId);
 
-    globalAdImpressionListener = TPGlobalAdImpressionListener(
-        onGlobalAdImpression: (adInfo) {
-          TPAdConfiguration.showLog(
-              'onGlobalAdImpression :  adInfo = $adInfo');
-        });
+    globalAdImpressionListener =
+        TPGlobalAdImpressionListener(onGlobalAdImpression: (adInfo) {
+      TPAdConfiguration.showLog('onGlobalAdImpression :  adInfo = $adInfo');
+    });
 
     TPSDKManager.setGlobalAdImpressionListener(globalAdImpressionListener!);
   }

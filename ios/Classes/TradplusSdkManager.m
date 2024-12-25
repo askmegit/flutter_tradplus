@@ -108,7 +108,33 @@
     {
         [self setSettingDataParam:call];
     }
+    else if([@"tp_openTradPlusTool" isEqualToString:call.method])
+    {
+        [self openTradPlusTool];
+    }
 }
+
+- (void) openTradPlusTool
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    Class TPMediationHelper = NSClassFromString(@"TPMediationHelper");
+    if(TPMediationHelper != nil)
+    {
+        if([TPMediationHelper respondsToSelector:@selector(open)])
+        {
+            [TPMediationHelper performSelector:@selector(open)];
+        }
+    }
+    else
+    {
+        NSLog(@"****************");
+        NSLog(@"no find TPMediationHelper SDK");
+        NSLog(@"****************");
+    }
+#pragma clang diagnostic pop
+}
+
 
 - (void)clearCacheWithCall:(FlutterMethodCall*)call
 {
@@ -134,7 +160,8 @@
     if(appId != nil && [appId isKindOfClass:[NSString class]])
     {
         [TradPlus initSDK:appId completionBlock:^(NSError * _Nonnull error) {
-            [TradplusSdkPlugin callbackWithEventName:@"tp_initFinish" adUnitID:nil adInfo:nil error:nil exp:@{@"success":@(error != nil)}];
+            BOOL success = (error != nil);
+            [TradplusSdkPlugin callbackWithEventName:@"tp_initFinish" adUnitID:nil adInfo:nil error:nil exp:@{@"success":@(success)}];
         }];
     }
     else

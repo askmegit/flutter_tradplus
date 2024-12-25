@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
-import 'part_refresh_view.dart';
 
 import 'configure.dart';
 import 'log.dart';
+import 'part_refresh_view.dart';
 
 class NativeWidget extends StatefulWidget {
   @override
@@ -53,7 +53,8 @@ class NativeWidgetState extends State<NativeWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       loadAd();
                     },
@@ -62,7 +63,8 @@ class NativeWidgetState extends State<NativeWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       showClassname();
                     },
@@ -71,7 +73,8 @@ class NativeWidgetState extends State<NativeWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       showExtraMap();
                     },
@@ -88,7 +91,8 @@ class NativeWidgetState extends State<NativeWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       checkAdReady();
                     },
@@ -97,7 +101,8 @@ class NativeWidgetState extends State<NativeWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       entryAdScenario();
                     },
@@ -106,7 +111,8 @@ class NativeWidgetState extends State<NativeWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       loadedCount();
                     },
@@ -126,11 +132,11 @@ class NativeWidgetState extends State<NativeWidget> {
           }),
           Container(
               child: Container(
-                width: 320,
-                height: 500,
-                margin: const EdgeInsets.only(top: 10),
-                child: getNativeView(),
-              )),
+            width: 320,
+            height: 500,
+            margin: const EdgeInsets.only(top: 10),
+            child: getNativeView(),
+          )),
         ],
       ),
     );
@@ -154,14 +160,11 @@ class NativeWidgetState extends State<NativeWidget> {
         templateHeight: 320,
         templateWidth: 320,
         customMap: customMap,
-        localParams:localParams);
+        localParams: localParams);
     TPNativeManager.loadNativeAd(unitId, extraMap: extraMap);
 
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Load",
-      "time":time
-    };
+    Map customAdInfo = {"act": "Load", "time": time};
     TPNativeManager.setCustomAdInfo(unitId, customAdInfo);
   }
 
@@ -170,7 +173,7 @@ class NativeWidgetState extends State<NativeWidget> {
     bool isReady = await TPNativeManager.nativeAdReady(unitId);
     print('isReady = $isReady');
     // setState(() {
-      infoString = "ad ready = $isReady";
+    infoString = "ad ready = $isReady";
     globalKey.currentState?.update();
     // });
   }
@@ -217,26 +220,24 @@ class NativeWidgetState extends State<NativeWidget> {
     globalKey.currentState?.update();
   }
 
-  getNativeView()
-  {
+  getNativeView() {
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Show",
-      "time":time
-    };
-    if (showType == 0)
-    {
+    Map customAdInfo = {"act": "Show", "time": time};
+    if (showType == 0) {
       return null;
-    }
-    else if (showType == 1) //使用布局
+    } else if (showType == 1) //使用布局
     {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         return TPNativeViewWidget(unitId, 320, 320,
-            className: "TPNativeTemplate", sceneId: sceneId,customAdInfo:customAdInfo);
+            className: "TPNativeTemplate",
+            sceneId: sceneId,
+            customAdInfo: customAdInfo);
       } else //android
       {
         return TPNativeViewWidget(unitId, 320, 540,
-            className: "native_ad_list_item",sceneId: sceneId,customAdInfo:customAdInfo);
+            className: "native_ad_list_item",
+            sceneId: sceneId,
+            customAdInfo: customAdInfo);
       }
     } else if (showType == 2) //使用自定义Map
     {
@@ -263,9 +264,8 @@ class NativeWidgetState extends State<NativeWidget> {
           "adLogo": TPNativeManager.createNativeSubViewAttribute(20, 20,
               x: 320 - 30, y: 10)
         },
-          customAdInfo:customAdInfo,
+        customAdInfo: customAdInfo,
       );
-
     }
   }
 
@@ -280,8 +280,8 @@ class NativeWidgetState extends State<NativeWidget> {
       onAdLoadFailed: (adUnitId, error) {
         TPAdConfiguration.showLog(
             'onAdLoadFailed : adUnitId = $adUnitId, error = $error');
-          infoString = "Load Failed";
-          globalKey.currentState?.update();
+        infoString = "Load Failed";
+        globalKey.currentState?.update();
       },
       onAdImpression: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
@@ -310,8 +310,8 @@ class NativeWidgetState extends State<NativeWidget> {
       onAdStartLoad: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'onAdStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
-          infoString = "start loading...";
-          globalKey.currentState?.update();
+        infoString = "start loading...";
+        globalKey.currentState?.update();
       },
       onBiddingStart: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
@@ -320,6 +320,9 @@ class NativeWidgetState extends State<NativeWidget> {
       onBiddingEnd: (adUnitId, adInfo, error) {
         TPAdConfiguration.showLog(
             'onBiddingEnd : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
+      },
+      onAdIsLoading: (adUnitId) {
+        TPAdConfiguration.showLog('onAdIsLoading : adUnitId = $adUnitId');
       },
       oneLayerStartLoad: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
@@ -341,27 +344,28 @@ class NativeWidgetState extends State<NativeWidget> {
         TPAdConfiguration.showLog(
             'onAdAllLoaded : adUnitId = $adUnitId, isSuccess = $isSuccess');
       },
-      onDownloadStart: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadStart: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadUpdate: (adUnitId, totalBytes,currBytes,fileName,appName, progress) {
+      onDownloadUpdate:
+          (adUnitId, totalBytes, currBytes, fileName, appName, progress) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName, progress = $progress');
       },
-      onDownloadPause: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadPause: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadPause : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFinish: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFinish: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFinish : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFail: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFail: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFail : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onInstall: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onInstall: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onInstall : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },

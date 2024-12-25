@@ -1,20 +1,53 @@
-## 1.0.1
-1.新增地域查询接口：可用来查询是否在 欧洲 美国加州 中国
-2.新增 设置数据库大小 仅支持android
-3.开屏增加跳过，点睛开始，点睛结束 回调 仅支持iOS
-TradPlus sdk 适配版本：Android - v8.4.0.1; iOS - v8.1.0
-## 1.0.2
-Android端修复已知问题
-TradPlus sdk 适配版本：Android - v8.4.0.1; iOS - v8.1.0
-## 1.0.3
-各广告类型增加透传数据功能
-TradPlus sdk 适配版本：Android - v8.6.0.1; iOS - v8.3.20
-## 1.0.4
-1.开屏支持原生混用。开发者可以在TradPlust后台进行配置
-2.横幅支持支持原生混用。开发者可以在TradPlust后台进行配置
-3.增加了全局展示回调接口
-4.增加API支持LGPD巴西隐私政策设置接口
-TradPlus sdk 适配版本：Android - v8.8.0.1; iOS - v8.5.0
+## 1.1.7
+
+Update TPNativeManager.java file
+
+## 1.1.6
+
+Depends on Android SDK v12.3.0.1 and iOS SDK v12.0.0
+
+## 1.1.5
+
+Optimize iOS initialization callback
+
+## 1.1.4
+
+Depends on Android SDK v10.5.0.1 and iOS SDK v9.8.0
+
+## 1.1.3
+
+Depends on Android SDK v10.0.1.1 and iOS SDK v9.7.0
+
+## 1.1.2
+
+Depends on Android SDK v9.9.0.1 and iOS SDK v9.6.0
+
+## 1.1.1
+
+Depends on Android SDK v9.8.0.1 and iOS SDK v9.5.0
+
+## 1.1.0
+
+* Depends on Android SDK v9.7.10.1 and iOS SDK v9.4.0
+
+## 1.0.9
+
+* Depends on Android SDK v9.6.10.1 and iOS SDK v9.3.0
+
+## 1.0.8
+
+* Fix iOS Known BUG
+
+## 1.0.7
+
+* Depends on Android SDK v9.1.0.1 and iOS SDK v8.7.0
+
+## 1.0.6
+
+* Fix README
+
 ## 1.0.5
-1.增加广告位isloading状态的回调接口
-TradPlus sdk 适配版本：Android - v9.0.0.1; iOS - v8.7.0
+
+* Depends on Android SDK v9.0.0.1 and iOS SDK v8.7.0
+
+

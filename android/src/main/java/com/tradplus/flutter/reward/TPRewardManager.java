@@ -6,9 +6,8 @@ import androidx.annotation.NonNull;
 
 import com.tradplus.ads.base.bean.TPAdError;
 import com.tradplus.ads.base.bean.TPAdInfo;
-import com.tradplus.ads.common.serialization.JSON;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.common.util.LogUtil;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
 import com.tradplus.ads.open.DownloadListener;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
 import com.tradplus.ads.open.RewardAdExListener;
@@ -16,6 +15,7 @@ import com.tradplus.ads.open.reward.RewardAdListener;
 import com.tradplus.ads.open.reward.TPReward;
 import com.tradplus.flutter.TPUtils;
 import com.tradplus.flutter.TradPlusSdk;
+import com.tradplus.ads.base.common.TPTaskManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +52,10 @@ public class TPRewardManager {
         TPReward tpReward = getOrCreateReward(adUnitId, params);
 
         if ("rewardVideo_load".equals(call.method)) {
-            tpReward.loadAd();
+            float time = getMaxWaitTime(params);
+            Log.e("TradPlusLog", "time = "+time);
+
+            tpReward.loadAd(time);
 
         } else if ("rewardVideo_entryAdScenario".equals(call.method)) {
             tpReward.entryAdScenario(call.argument("sceneId"));
@@ -73,15 +76,29 @@ public class TPRewardManager {
 
     }
 
+    private float getMaxWaitTime(Map<String, Object> params){
+        try {
+            if(params.containsKey("maxWaitTime")) {
+                return  new Double((double) params.get("maxWaitTime")).floatValue();
+            }
+        }catch (Throwable throwable){
+            return 0;
+        }
+
+        return 0;
+    }
+
     private TPReward getOrCreateReward(String adUnitId, Map<String, Object> params) {
 
         TPReward tpReward = mTPReward.get(adUnitId);
         if (tpReward == null) {
             tpReward = new TPReward(TradPlusSdk.getInstance().getActivity(), adUnitId);
+
+
             mTPReward.put(adUnitId, tpReward);
-            tpReward.setAdListener(new TPRewardManager.TPRewardAdListener(adUnitId));
-            tpReward.setAllAdLoadListener(new TPRewardManager.TPRewardAllAdListener(adUnitId));
-            tpReward.setDownloadListener(new TPRewardManager.TPRewardDownloadListener(adUnitId));
+            tpReward.setAdListener(new TPRewardAdListener(adUnitId));
+            tpReward.setAllAdLoadListener(new TPRewardAllAdListener(adUnitId));
+            tpReward.setDownloadListener(new TPRewardDownloadListener(adUnitId));
             tpReward.setRewardAdExListener(new TPRewardExdListener(adUnitId));
             Log.v("TradPlus", "createReward adUnitId:" + adUnitId);
 
@@ -101,6 +118,12 @@ public class TPRewardManager {
             if (params != null && params.containsKey("userId")) {
                 temp.put("user_id", params.get("userId"));
             }
+
+            if(params.containsKey("openAutoLoadCallback")) {
+                boolean openAutoLoadCallback = (boolean) params.get("openAutoLoadCallback");
+                tpReward.setAutoLoadCallback(openAutoLoadCallback);
+            }
+
 
             Log.v("TradPlus","map params temp = "+temp);
             tpReward.setCustomParams(temp);
@@ -319,9 +342,14 @@ public class TPRewardManager {
         @Override
         public void onAdIsLoading(String s) {
             Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
-            final Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put("adUnitID", mAdUnitId);
-            TradPlusSdk.getInstance().sendCallBackToFlutter("rewardVideo_isLoading", paramsMap);
+            TPTaskManager.getInstance().runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Map<String, Object> paramsMap = new HashMap<>();
+                    paramsMap.put("adUnitID", mAdUnitId);
+                    TradPlusSdk.getInstance().sendCallBackToFlutter("rewardVideo_isLoading", paramsMap);
+                }
+            });
         }
     }
     private class TPRewardAdListener implements RewardAdListener {

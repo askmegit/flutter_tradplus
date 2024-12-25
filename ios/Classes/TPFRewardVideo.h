@@ -14,8 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly)BOOL isAdReady;
 
 - (void)setAdUnitID:(NSString * _Nonnull)adUnitID;
-- (void)loadAd;
+- (void)loadAdWithMaxWaitTime:(NSTimeInterval)maxWaitTime;
+- (void)openAutoLoadCallback;
 - (void)setCustomMap:(NSDictionary *)dic;
+- (void)setLocalParams:(NSDictionary *)dic;
 - (void)setServerSideVerificationOptionsWithUserID:(nonnull NSString *)userID customData:(nullable NSString *)customData;
 - (void)showAdWithSceneId:(nullable NSString *)sceneId;
 - (void)entryAdScenario:(nullable NSString *)sceneId;

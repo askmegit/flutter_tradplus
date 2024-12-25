@@ -1,5 +1,6 @@
 package com.tradplus.flutter.banner;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -7,25 +8,19 @@ import androidx.annotation.NonNull;
 
 import com.tradplus.ads.base.bean.TPAdError;
 import com.tradplus.ads.base.bean.TPAdInfo;
-import com.tradplus.ads.base.bean.TPBaseAd;
 import com.tradplus.ads.base.config.ConfigLoadManager;
-import com.tradplus.ads.common.serialization.JSON;
+import com.tradplus.ads.base.network.response.ConfigResponse;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.common.util.LogUtil;
 import com.tradplus.ads.core.AdCacheManager;
-import com.tradplus.ads.core.AdMediationManager;
-import com.tradplus.ads.mgr.nativead.TPCustomNativeAd;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
-import com.tradplus.ads.network.response.ConfigResponse;
 import com.tradplus.ads.open.DownloadListener;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
 import com.tradplus.ads.open.banner.BannerAdListener;
 import com.tradplus.ads.open.banner.TPBanner;
-import com.tradplus.ads.open.nativead.NativeAdListener;
-import com.tradplus.ads.open.nativead.TPNative;
 import com.tradplus.ads.open.nativead.TPNativeAdRender;
 import com.tradplus.flutter.TPUtils;
 import com.tradplus.flutter.TradPlusSdk;
-import com.tradplus.flutter.nativead.TPNativeManager;
+import com.tradplus.ads.base.common.TPTaskManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +60,7 @@ public class TPBannerManager {
 
         if ("banner_load".equals(call.method)) {
             String sceneId = (String) params.get("sceneId");
-            tpBanner.loadAd(adUnitId, sceneId);
+            tpBanner.loadAd(adUnitId, sceneId, getMaxWaitTime(params));
 
         } else if ("banner_entryAdScenario".equals(call.method)) {
             tpBanner.entryAdScenario(call.argument("sceneId"));
@@ -74,10 +69,22 @@ public class TPBannerManager {
         } else if ("banner_setCustomAdInfo".equals(call.method)) {
             tpBanner.setCustomShowData(call.argument("customAdInfo"));
 
-        }else {
+        } else {
             Log.e("TradPlusLog", "unknown method");
         }
 
+    }
+
+    private float getMaxWaitTime(Map<String, Object> params) {
+        try {
+            if (params.containsKey("maxWaitTime")) {
+                return new Double((double) params.get("maxWaitTime")).floatValue();
+            }
+        } catch (Throwable throwable) {
+            return 0;
+        }
+
+        return 0;
     }
 
     private TPBanner getOrCreateBanner(String adUnitId, Map<String, Object> params) {
@@ -86,43 +93,66 @@ public class TPBannerManager {
             tpBanner = new TPBanner(TradPlusSdk.getInstance().getActivity());
             mTPBanners.put(adUnitId, tpBanner);
             tpBanner.closeAutoShow();
-            tpBanner.setAdListener(new TPBannerManager.TPBannerAdListener(adUnitId));
-            tpBanner.setAllAdLoadListener(new TPBannerManager.TPBannerAllAdListener(adUnitId));
-            tpBanner.setDownloadListener(new TPBannerManager.TPBannerDownloadListener(adUnitId));
+            tpBanner.setAdListener(new TPBannerAdListener(adUnitId));
+            tpBanner.setAllAdLoadListener(new TPBannerAllAdListener(adUnitId));
+            tpBanner.setDownloadListener(new TPBannerDownloadListener(adUnitId));
             Log.v("TradPlus", "createBanner adUnitId:" + adUnitId);
 
             // 只需要设置一次的在这里设置
 
         }
 
-        LogUtil.ownShow("map params = "+params);
-        if(params != null) {
+        LogUtil.ownShow("map params = " + params);
+        if (params != null) {
             if (params.containsKey("localParams")) {
                 HashMap<String, Object> temp = new HashMap<>();
                 temp = (HashMap<String, Object>) params.get("localParams");
-                Log.v("TradPlus","map params temp = "+temp);
+                Log.v("TradPlus", "map params temp = " + temp);
                 tpBanner.setCustomParams(temp);
             }
 
             if (params.containsKey("customMap")) {
                 SegmentUtils.initPlacementCustomMap(adUnitId, (Map<String, String>) params.get("customMap"));
             }
-        }
 
+            if (params.containsKey("openAutoLoadCallback")) {
+                boolean openAutoLoadCallback = (boolean) params.get("openAutoLoadCallback");
+                Log.v("TradPlus", "map params temp1 = " + openAutoLoadCallback);
+                tpBanner.setAutoLoadCallback(openAutoLoadCallback);
+            }
+
+            if (params.containsKey("closeAutoDestroy")) {
+                boolean closeAutoDestroy = (boolean) params.get("closeAutoDestroy");
+                Log.v("TradPlus", "map params temp closeAutoDestroy = " + closeAutoDestroy);
+                tpBanner.setAutoDestroy(closeAutoDestroy);
+            }
+
+            if (params.containsKey("backgroundColor")) {
+                try {
+                    String backgroundColor = (String) params.get("backgroundColor");
+                    Log.v("TradPlus", "map params temp backgroundColor = " + backgroundColor);
+                    tpBanner.setBackgroundColor(Color.parseColor(backgroundColor));
+                } catch (Throwable throwable) {
+
+                }
+
+
+            }
+        }
 
 
         return tpBanner;
     }
 
-    public boolean renderView(String adUnitId, ViewGroup viewContainer, String adSceneId,TPNativeAdRender tpNativeAdRender) {
+    public boolean renderView(String adUnitId, ViewGroup viewContainer, String adSceneId, TPNativeAdRender tpNativeAdRender) {
         TPBanner tpBanner = mTPBanners.get(adUnitId);
 
-        if(tpBanner == null){
+        if (tpBanner == null) {
             Log.v("TradPlusLog", "TPBanner is null");
             return false;
         }
 
-        if(viewContainer == null){
+        if (viewContainer == null) {
             Log.v("TradPlusLog", "viewContainer is null");
             return false;
         }
@@ -131,12 +161,12 @@ public class TPBannerManager {
             ((ViewGroup) tpBanner.getParent()).removeView(tpBanner);
         }
 
-        if(tpNativeAdRender != null){
+        if (tpNativeAdRender != null) {
             tpBanner.setNativeAdRender(tpNativeAdRender);
         }
 
         viewContainer.addView(tpBanner);
-        if(isReady(adUnitId)) {
+        if (isReady(adUnitId)) {
             tpBanner.showAd(adSceneId);
         }
 
@@ -146,30 +176,35 @@ public class TPBannerManager {
         return true;
     }
 
-    private boolean isReady(String adUnitId){
-        return AdCacheManager.getInstance().getReadyAdNum(adUnitId) > 0;
+    private boolean isReady(String adUnitId) {
+        TPBanner tpBanner = mTPBanners.get(adUnitId);
+        if (tpBanner != null) {
+            return tpBanner.isReady();
+        }
+
+        return false;
     }
 
-    private boolean isReadyByBanner(String adUnitId){
+    private boolean isReadyByBanner(String adUnitId) {
         boolean isReadyNum = AdCacheManager.getInstance().getReadyAdNum(adUnitId) > 0;
         TPBanner tpBanner = mTPBanners.get(adUnitId);
         boolean isShown = false;
 
-        if(tpBanner == null){
+        if (tpBanner == null) {
             isShown = false;
-        }else{
-            if(tpBanner.getChildCount() > 0){
+        } else {
+            if (tpBanner.getChildCount() > 0) {
                 isShown = true;
             }
         }
 
-        if(isOpenRefresh(adUnitId) && (isShown || isReadyNum) ){
+        if (isOpenRefresh(adUnitId) && (isShown || isReadyNum)) {
             return true;
         }
         return isReadyNum;
     }
 
-    private boolean isOpenRefresh(String adUnitId){
+    private boolean isOpenRefresh(String adUnitId) {
         long refreshTime = 0;
         ConfigResponse configResponse = ConfigLoadManager.getInstance().getLocalConfigResponse(adUnitId);
         if (configResponse != null) {
@@ -345,9 +380,15 @@ public class TPBannerManager {
         @Override
         public void onAdIsLoading(String s) {
             Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
-            final Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put("adUnitID", mAdUnitId);
-            TradPlusSdk.getInstance().sendCallBackToFlutter("banner_isLoading", paramsMap);
+            TPTaskManager.getInstance().runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Map<String, Object> paramsMap = new HashMap<>();
+                    paramsMap.put("adUnitID", mAdUnitId);
+                    TradPlusSdk.getInstance().sendCallBackToFlutter("banner_isLoading", paramsMap);
+                }
+            });
+
         }
     }
 

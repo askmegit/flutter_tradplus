@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'part_refresh_view.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
+
 import 'configure.dart';
 import 'log.dart';
+import 'part_refresh_view.dart';
 
 class BannerWidget extends StatefulWidget {
   @override
@@ -15,13 +16,14 @@ class BannerWidget extends StatefulWidget {
 class BannerWidgetState extends State<BannerWidget> {
   String unitId = TPAdConfiguration.bannerAdUnitId;
   static TPBannerAdListener? listener;
+  int googleURLIndex = 0;
   bool hasAd = false;
   bool useDef = true;
   String useDefText = "模版：默认";
   String infoString = "";
   String sceneId = TPAdConfiguration.bannerSceneId;
-
   GlobalKey<PartRefreshWidgetState> globalKey = new GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +53,8 @@ class BannerWidgetState extends State<BannerWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       loadAd();
                     },
@@ -60,7 +63,8 @@ class BannerWidgetState extends State<BannerWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       checkAdReady();
                     },
@@ -69,7 +73,8 @@ class BannerWidgetState extends State<BannerWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       showAd();
                     },
@@ -78,7 +83,8 @@ class BannerWidgetState extends State<BannerWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       entryAdScenario();
                     },
@@ -95,14 +101,59 @@ class BannerWidgetState extends State<BannerWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white70),
-                onPressed: () {
-                  changeClassName();
-                },
-                child: Text(useDefText,
-                  style: TextStyle(
-                  color: Colors.black,
-                  ))),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
+                    onPressed: () {
+                      changeClassName();
+                    },
+                    child: Text(useDefText,
+                        style: TextStyle(
+                          color: Colors.black,
+                        ))),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
+                    onPressed: () {
+                      googleURLIndex = 0;
+                      infoString = "google 无URL";
+                      globalKey.currentState?.update();
+                    },
+                    child: const Text("无URL",
+                        style: TextStyle(
+                          color: Colors.black,
+                        ))),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
+                    onPressed: () {
+                      googleURLIndex = 1;
+                      infoString = "google 单URL";
+                      globalKey.currentState?.update();
+                    },
+                    child: const Text("单URL",
+                        style: TextStyle(
+                          color: Colors.black,
+                        ))),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
+                    onPressed: () {
+                      googleURLIndex = 2;
+                      infoString = "google 多URL";
+                      globalKey.currentState?.update();
+                    },
+                    child: const Text("多URL",
+                        style: TextStyle(
+                          color: Colors.black,
+                        ))),
               ],
             ),
           ),
@@ -115,14 +166,14 @@ class BannerWidgetState extends State<BannerWidget> {
           }),
           Container(
               child: Container(
-                // height: 100,
-                width: 320,
-                height: 60,
+            // height: 100,
+            width: MediaQuery.of(context).size.width,
+            height: 100,
 
-                // color: Colors.deepPurple,
-                margin: const EdgeInsets.only(top: 20),
-                child: getBanner(),
-              ))
+            // color: Colors.deepPurple,
+            margin: const EdgeInsets.only(top: 20),
+            child: getBanner(),
+          ))
         ],
       ),
     );
@@ -142,22 +193,36 @@ class BannerWidgetState extends State<BannerWidget> {
       "user_id": "banner_userId",
       "custom_data": "banner_customData"
     };
+    if (googleURLIndex == 1) {
+      localParams['google_neighboring_contenturls'] = [
+        'https://www.example.com'
+      ];
+    } else if (googleURLIndex == 2) {
+      localParams['google_neighboring_contenturls'] = [
+        'https://www.example1.com',
+        'https://www.example2.com',
+        'https://www.example3.com',
+        'https://www.example4.com'
+      ];
+    }
     Map extraMap = TPBannerManager.createBannerExtraMap(
-        height: 60, width: 320, customMap: customMap,localParams:localParams, sceneId: sceneId);
+      height: 100,
+      width: 0,
+      customMap: customMap,
+      localParams: localParams,
+      closeAutoDestroy: true,
+      sceneId: sceneId,
+    );
     TPBannerManager.loadBannerAd(unitId, extraMap: extraMap);
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Load",
-      "time":time
-    };
+    Map customAdInfo = {"act": "Load", "time": time};
     TPBannerManager.setCustomAdInfo(unitId, customAdInfo);
   }
 
-  changeClassName()
-  {
+  changeClassName() {
     setState(() {
       useDef = !useDef;
-      if(useDef)
+      if (useDef)
         useDefText = "模版：默认";
       else
         useDefText = "模版：自定义";
@@ -170,10 +235,7 @@ class BannerWidgetState extends State<BannerWidget> {
     if (isReady) {
       setState(() {
         String time = DateTime.now().millisecondsSinceEpoch.toString();
-        Map customAdInfo ={
-          "act":"Show",
-          "time":time
-        };
+        Map customAdInfo = {"act": "Show", "time": time};
         TPBannerManager.setCustomAdInfo(unitId, customAdInfo);
         hasAd = true;
       });
@@ -185,7 +247,7 @@ class BannerWidgetState extends State<BannerWidget> {
     bool isReady = await TPBannerManager.bannerAdReady(unitId);
     print('isReady = $isReady');
     // setState(() {
-      infoString = "ad ready = $isReady";
+    infoString = "ad ready = $isReady";
     globalKey.currentState?.update();
     // });
   }
@@ -200,7 +262,7 @@ class BannerWidgetState extends State<BannerWidget> {
         TPAdConfiguration.showLog(
             'onAdLoaded : adUnitId = $adUnitId, adInfo = $adInfo');
         // setState(() {
-          infoString = "Ad Loaded";
+        infoString = "Ad Loaded";
         globalKey.currentState?.update();
         // });
       },
@@ -208,7 +270,7 @@ class BannerWidgetState extends State<BannerWidget> {
         TPAdConfiguration.showLog(
             'onAdLoadFailed : adUnitId = $adUnitId, error = $error');
         // setState(() {
-          infoString = "Load Failed";
+        infoString = "Load Failed";
         globalKey.currentState?.update();
         // });
       },
@@ -240,7 +302,7 @@ class BannerWidgetState extends State<BannerWidget> {
         TPAdConfiguration.showLog(
             'onAdStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
         // setState(() {
-          infoString = "start loading...";
+        infoString = "start loading...";
         globalKey.currentState?.update();
         // });
       },
@@ -251,6 +313,9 @@ class BannerWidgetState extends State<BannerWidget> {
       onBiddingEnd: (adUnitId, adInfo, error) {
         TPAdConfiguration.showLog(
             'onBiddingEnd : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
+      },
+      onAdIsLoading: (adUnitId) {
+        TPAdConfiguration.showLog('onAdIsLoading : adUnitId = $adUnitId');
       },
       oneLayerStartLoad: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
@@ -264,27 +329,28 @@ class BannerWidgetState extends State<BannerWidget> {
         TPAdConfiguration.showLog(
             'onAdAllLoaded : adUnitId = $adUnitId, isSuccess = $isSuccess');
       },
-      onDownloadStart: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadStart: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadUpdate: (adUnitId, totalBytes,currBytes,fileName,appName, progress) {
+      onDownloadUpdate:
+          (adUnitId, totalBytes, currBytes, fileName, appName, progress) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName, progress = $progress');
       },
-      onDownloadPause: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadPause: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadPause : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFinish: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFinish: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFinish : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFail: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFail: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFail : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onInstall: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onInstall: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onInstall : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
@@ -296,23 +362,17 @@ class BannerWidgetState extends State<BannerWidget> {
     if (!hasAd) {
       return null;
     }
-    if(useDef)
-    {
+    if (useDef) {
       return TPBannerViewWidget(unitId);
-    }
-    else
-    {
+    } else {
       //使用自定义模版
       String className = "";
-      if(defaultTargetPlatform == TargetPlatform.iOS)
-      {
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
         className = "NativeBannerTemplate";
-      }
-      else
-      {
+      } else {
         className = "native_banner_ad_unit";
       }
-      return TPBannerViewWidget(unitId,className:className);
+      return TPBannerViewWidget(unitId, className: className);
     }
   }
 }

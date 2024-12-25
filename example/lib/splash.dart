@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
+
 import 'configure.dart';
-import 'log.dart';
 
 class SplashWidget extends StatefulWidget {
   @override
@@ -37,43 +37,47 @@ class SplashWidgetState extends State<SplashWidget> {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white70),
-                      onPressed: () {
-                        loadAd();
-                      },
-                      child: const Text("Load",
-                          style: TextStyle(
-                            color: Colors.black,
-                          ))),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white70),
-                      onPressed: () {
-                        checkAdReady();
-                      },
-                      child: const Text("isReady",
-                          style: TextStyle(
-                            color: Colors.black,
-                          ))),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white70),
-                      onPressed: () {
-                        showAd();
-                      },
-                      child: const Text("Show",
-                          style: TextStyle(
-                            color: Colors.black,
-                          ))),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white70),
-                      onPressed: () {
-                        changeClassName();
-                      },
-                      child:  Text(useDefText,
-                          style: TextStyle(
-                            color: Colors.black,
-                          ))),
-                ]),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white70),
+                          onPressed: () {
+                            loadAd();
+                          },
+                          child: const Text("Load",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ))),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white70),
+                          onPressed: () {
+                            checkAdReady();
+                          },
+                          child: const Text("isReady",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ))),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white70),
+                          onPressed: () {
+                            showAd();
+                          },
+                          child: const Text("Show",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ))),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white70),
+                          onPressed: () {
+                            changeClassName();
+                          },
+                          child: Text(useDefText,
+                              style: TextStyle(
+                                color: Colors.black,
+                              ))),
+                    ]),
                 Container(
                   height: 100,
                   margin: const EdgeInsets.only(top: 20),
@@ -114,18 +118,14 @@ class SplashWidgetState extends State<SplashWidget> {
     TPSplashManager.loadSplashAd(unitId, extraMap: extraMap);
 
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Load",
-      "time":time
-    };
+    Map customAdInfo = {"act": "Load", "time": time};
     TPSplashManager.setCustomAdInfo(unitId, customAdInfo);
   }
 
-  changeClassName()
-  {
+  changeClassName() {
     setState(() {
       useDef = !useDef;
-      if(useDef)
+      if (useDef)
         useDefText = "模版：默认";
       else
         useDefText = "模版：自定义";
@@ -136,12 +136,8 @@ class SplashWidgetState extends State<SplashWidget> {
   showAd() async {
     bool isReady = await TPSplashManager.splashAdReady(unitId);
     if (isReady) {
-
       String time = DateTime.now().millisecondsSinceEpoch.toString();
-      Map customAdInfo ={
-        "act":"Show",
-        "time":time
-      };
+      Map customAdInfo = {"act": "Show", "time": time};
       TPSplashManager.setCustomAdInfo(unitId, customAdInfo);
 
       if (defaultTargetPlatform == TargetPlatform.android) {
@@ -223,6 +219,9 @@ class SplashWidgetState extends State<SplashWidget> {
         TPAdConfiguration.showLog(
             'onBiddingEnd : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
       },
+      onAdIsLoading: (adUnitId) {
+        TPAdConfiguration.showLog('onAdIsLoading : adUnitId = $adUnitId');
+      },
       oneLayerStartLoad: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'oneLayerStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
@@ -235,15 +234,15 @@ class SplashWidgetState extends State<SplashWidget> {
         TPAdConfiguration.showLog(
             'onAdAllLoaded : adUnitId = $adUnitId, isSuccess = $isSuccess');
       },
-      onZoomOutStart:(adUnitId, adInfo) {
+      onZoomOutStart: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'onZoomOutStart : adUnitId = $adUnitId, adInfo = $adInfo');
       },
-      onZoomOutEnd:(adUnitId, adInfo) {
+      onZoomOutEnd: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'onZoomOutEnd : adUnitId = $adUnitId, adInfo = $adInfo');
       },
-      onSkip:(adUnitId, adInfo) {
+      onSkip: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'onSkip : adUnitId = $adUnitId, adInfo = $adInfo');
       },
@@ -280,15 +279,11 @@ class SplashWidgetState extends State<SplashWidget> {
     if (!hasAd) {
       return null;
     }
-    if(useDef)
-    {
+    if (useDef) {
       return TPSplashViewWidget(unitId);
-    }
-    else
-    {
+    } else {
       String layoutName = "tp_native_splash_ad1";
-      return TPSplashViewWidget(unitId,layoutName: layoutName);
+      return TPSplashViewWidget(unitId, layoutName: layoutName);
     }
-
   }
 }

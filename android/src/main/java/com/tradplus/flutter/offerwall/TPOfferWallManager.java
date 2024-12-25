@@ -7,9 +7,8 @@ import androidx.annotation.NonNull;
 import com.tradplus.ads.base.bean.TPAdError;
 import com.tradplus.ads.base.bean.TPAdInfo;
 import com.tradplus.ads.base.common.TPTaskManager;
-import com.tradplus.ads.common.serialization.JSON;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.common.util.LogUtil;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
 import com.tradplus.ads.open.offerwall.OffWallBalanceListener;
 import com.tradplus.ads.open.offerwall.OfferWallAdListener;
@@ -53,7 +52,7 @@ public class TPOfferWallManager {
         TPOfferWall tpOfferWall = getOrCreateOfferWall(adUnitId, params);
 
         if ("offerwall_load".equals(call.method)) {
-            tpOfferWall.loadAd();
+            tpOfferWall.loadAd(getMaxWaitTime(params));
 
         } else if ("offerwall_entryAdScenario".equals(call.method)) {
             tpOfferWall.entryAdScenario(call.argument("sceneId"));
@@ -86,6 +85,18 @@ public class TPOfferWallManager {
 
     }
 
+    private float getMaxWaitTime(Map<String, Object> params){
+        try {
+            if(params.containsKey("maxWaitTime")) {
+                return  new Double((double) params.get("maxWaitTime")).floatValue();
+            }
+        }catch (Throwable throwable){
+            return 0;
+        }
+
+        return 0;
+    }
+
     private TPOfferWall getOrCreateOfferWall(String adUnitId, Map<String, Object> params) {
         TPOfferWall tpOfferWall = mTPOfferWall.get(adUnitId);
         if (tpOfferWall == null) {
@@ -113,10 +124,16 @@ public class TPOfferWallManager {
                 SegmentUtils.initPlacementCustomMap(adUnitId, (Map<String, String>) params.get("customMap"));
             }
 
+            if(params.containsKey("openAutoLoadCallback")) {
+                boolean openAutoLoadCallback = (boolean) params.get("openAutoLoadCallback");
+                tpOfferWall.setAutoLoadCallback(openAutoLoadCallback);
+            }
+
         }
 
         return tpOfferWall;
     }
+
 
 
     private class TPOfferWallBalanceAdListener implements OffWallBalanceListener {

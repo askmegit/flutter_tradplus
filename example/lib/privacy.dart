@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
-import 'log.dart';
+
 import 'configure.dart';
+import 'log.dart';
 
 class PrivacyWidget extends StatefulWidget {
   @override
@@ -77,7 +77,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
             Container(
               margin: const EdgeInsets.only(left: 50),
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white70),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                   onPressed: () {
                     setGDPR();
                   },
@@ -95,7 +96,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
             Container(
               margin: const EdgeInsets.only(left: 50),
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white70),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                   onPressed: () {
                     setCCPA();
                   },
@@ -113,7 +115,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
             Container(
               margin: const EdgeInsets.only(left: 50),
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white70),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                   onPressed: () {
                     setCOPPA();
                   },
@@ -131,7 +134,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
             Container(
               margin: const EdgeInsets.only(left: 50),
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white70),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                   onPressed: () {
                     setLGPD();
                   },
@@ -149,7 +153,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
             Container(
               margin: const EdgeInsets.only(left: 50),
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white70),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                   onPressed: () {
                     setPersonalizedAd();
                   },
@@ -164,7 +169,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
         {
           return [
             ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white70),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                 onPressed: () {
                   showGDPRDialog();
                 },
@@ -178,7 +184,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
         {
           return [
             ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white70),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                 onPressed: () {
                   checkCurrentArea();
                 },
@@ -192,7 +199,8 @@ class PrivacyWidgetState extends State<PrivacyWidget> {
         {
           return [
             ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white70),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.white70),
                 onPressed: () {
                   setOpenDelayLoadAds(true);
                 },

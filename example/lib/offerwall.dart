@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
+
 import 'configure.dart';
 import 'log.dart';
 
@@ -23,21 +24,18 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('积分墙'),
-            actions:<Widget>[
-              IconButton(
-                icon: const Icon(Icons.info_outline),
-                tooltip: 'Log',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LogWidget()),
-                  );
-                },
-              ),
-            ]
-        ),
+        appBar: AppBar(title: const Text('积分墙'), actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Log',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LogWidget()),
+              );
+            },
+          ),
+        ]),
         body: Column(children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
@@ -45,7 +43,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       loadAd();
                     },
@@ -54,7 +53,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       checkAdReady();
                     },
@@ -63,7 +63,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       showAd();
                     },
@@ -72,7 +73,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       entryOfferWallAdScenario();
                     },
@@ -89,7 +91,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       setUserId();
                     },
@@ -98,7 +101,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       getCurrencyBalance();
                     },
@@ -107,7 +111,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       spendBalance();
                     },
@@ -116,7 +121,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       awardBalance();
                     },
@@ -130,10 +136,7 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
           Container(
             height: 100,
             margin: const EdgeInsets.only(top: 20),
-            child: Text(
-                infoString,
-                textAlign:TextAlign.center
-            ),
+            child: Text(infoString, textAlign: TextAlign.center),
           )
         ]));
   }
@@ -152,27 +155,19 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
       "custom_data": "offerwall_customData"
     };
     Map extraMap = TPOfferWallManager.createOfferwallExtraMap(
-        customMap: customMap,
-        localParams:localParams);
-    TPOfferWallManager.loadOfferwallAd(unitId,extraMap: extraMap);
+        customMap: customMap, localParams: localParams);
+    TPOfferWallManager.loadOfferwallAd(unitId, extraMap: extraMap);
 
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Load",
-      "time":time
-    };
+    Map customAdInfo = {"act": "Load", "time": time};
     TPOfferWallManager.setCustomAdInfo(unitId, customAdInfo);
   }
 
   showAd() async {
     bool isReady = await TPOfferWallManager.offerwallAdReady(unitId);
     if (isReady) {
-
       String time = DateTime.now().millisecondsSinceEpoch.toString();
-      Map customAdInfo ={
-        "act":"Show",
-        "time":time
-      };
+      Map customAdInfo = {"act": "Show", "time": time};
       TPOfferWallManager.setCustomAdInfo(unitId, customAdInfo);
 
       TPOfferWallManager.showOfferwallAd(unitId);
@@ -192,9 +187,8 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
     print(' entryOfferWallAdScenario');
   }
 
-  setUserId() async
-  {
-    TPOfferWallManager.setUserId(unitId,"test_userid");
+  setUserId() async {
+    TPOfferWallManager.setUserId(unitId, "test_userid");
   }
 
   getCurrencyBalance() async {
@@ -215,29 +209,34 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
   addListener() {
     listener = TPOfferwallAdListener(
       onAdLoaded: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onAdLoaded : adUnitId = $adUnitId, adInfo = $adInfo');
-        setState((){
+        TPAdConfiguration.showLog(
+            'onAdLoaded : adUnitId = $adUnitId, adInfo = $adInfo');
+        setState(() {
           infoString = "Ad Loaded";
         });
       },
       onAdLoadFailed: (adUnitId, error) {
-        TPAdConfiguration.showLog('onAdLoadFailed : adUnitId = $adUnitId, error = $error');
-        setState((){
+        TPAdConfiguration.showLog(
+            'onAdLoadFailed : adUnitId = $adUnitId, error = $error');
+        setState(() {
           infoString = "Load Failed";
         });
       },
       onAdImpression: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onAdImpression : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'onAdImpression : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       onAdShowFailed: (adUnitId, adInfo, error) {
         TPAdConfiguration.showLog(
             'onAdShowFailed : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
       },
       onAdClicked: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onAdClicked : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'onAdClicked : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       onAdClosed: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onAdClosed : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'onAdClosed : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       oneLayerLoadFailed: (adUnitId, adInfo, error) {
         TPAdConfiguration.showLog(
@@ -245,73 +244,89 @@ class OfferWallWidgetState extends State<OfferWallWidget> {
       },
       //以下回调可选
       onAdStartLoad: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onAdStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
-        setState((){
+        TPAdConfiguration.showLog(
+            'onAdStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
+        setState(() {
           infoString = "start loading...";
         });
       },
       onBiddingStart: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onBiddingStart : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'onBiddingStart : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       onBiddingEnd: (adUnitId, adInfo, error) {
         TPAdConfiguration.showLog(
             'onBiddingEnd : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
       },
+      onAdIsLoading: (adUnitId) {
+        TPAdConfiguration.showLog('onAdIsLoading : adUnitId = $adUnitId');
+      },
       oneLayerStartLoad: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('oneLayerStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'oneLayerStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       oneLayerLoaded: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('oneLayerLoaded : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'oneLayerLoaded : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       onVideoPlayStart: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onVideoPlayStart : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'onVideoPlayStart : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       onVideoPlayEnd: (adUnitId, adInfo) {
-        TPAdConfiguration.showLog('onVideoPlayEnd : adUnitId = $adUnitId, adInfo = $adInfo');
+        TPAdConfiguration.showLog(
+            'onVideoPlayEnd : adUnitId = $adUnitId, adInfo = $adInfo');
       },
       onAdAllLoaded: (adUnitId, isSuccess) {
-        TPAdConfiguration.showLog('onAdAllLoaded : adUnitId = $adUnitId, isSuccess = $isSuccess');
+        TPAdConfiguration.showLog(
+            'onAdAllLoaded : adUnitId = $adUnitId, isSuccess = $isSuccess');
       },
       currencyBalanceSuccess: (adUnitId, amount, msg) {
-        TPAdConfiguration.showLog('currencyBalanceSuccess : adUnitId = $adUnitId, amount = $amount, msg = $msg');
-        setState((){
+        TPAdConfiguration.showLog(
+            'currencyBalanceSuccess : adUnitId = $adUnitId, amount = $amount, msg = $msg');
+        setState(() {
           infoString = "当前用户积分：amount = $amount";
         });
       },
       currencyBalanceFailed: (adUnitId, msg) {
-        TPAdConfiguration.showLog('currencyBalanceFailed : adUnitId = $adUnitId, msg = $msg');
-        setState((){
+        TPAdConfiguration.showLog(
+            'currencyBalanceFailed : adUnitId = $adUnitId, msg = $msg');
+        setState(() {
           infoString = "当前用户积分获取失败";
         });
       },
       spendCurrencySuccess: (adUnitId, amount, msg) {
-        TPAdConfiguration.showLog('spendCurrencySuccess : adUnitId = $adUnitId, amount = $amount, msg = $msg');
-        setState((){
+        TPAdConfiguration.showLog(
+            'spendCurrencySuccess : adUnitId = $adUnitId, amount = $amount, msg = $msg');
+        setState(() {
           infoString = "扣除用户积分成功，当前用户积分：amount = $amount";
         });
       },
       spendCurrencyFailed: (adUnitId, msg) {
-        TPAdConfiguration.showLog('spendCurrencyFailed : adUnitId = $adUnitId, msg = $msg');
-        setState((){
+        TPAdConfiguration.showLog(
+            'spendCurrencyFailed : adUnitId = $adUnitId, msg = $msg');
+        setState(() {
           infoString = "扣除积分失败";
         });
       },
       awardCurrencySuccess: (adUnitId, amount, msg) {
-        TPAdConfiguration.showLog('awardCurrencySuccess : adUnitId = $adUnitId, amount = $amount, msg = $msg');
-        setState((){
+        TPAdConfiguration.showLog(
+            'awardCurrencySuccess : adUnitId = $adUnitId, amount = $amount, msg = $msg');
+        setState(() {
           infoString = "增加用户积分成功，当前用户积分：amount = $amount";
         });
       },
       awardCurrencyFailed: (adUnitId, msg) {
-        TPAdConfiguration.showLog('awardCurrencyFailed : adUnitId = $adUnitId, msg = $msg');
-        setState((){
+        TPAdConfiguration.showLog(
+            'awardCurrencyFailed : adUnitId = $adUnitId, msg = $msg');
+        setState(() {
           infoString = "增加积分失败";
         });
       },
-      setUserIdFinish: (adUnitId , isSuccess)
-      {
-        TPAdConfiguration.showLog('setUserIdFinish : adUnitId = $adUnitId, isSuccess = $isSuccess');
-        setState((){
+      setUserIdFinish: (adUnitId, isSuccess) {
+        TPAdConfiguration.showLog(
+            'setUserIdFinish : adUnitId = $adUnitId, isSuccess = $isSuccess');
+        setState(() {
           infoString = "设置 userId $isSuccess";
         });
       },

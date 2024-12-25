@@ -6,25 +6,22 @@ import androidx.annotation.NonNull;
 
 import com.tradplus.ads.base.bean.TPAdError;
 import com.tradplus.ads.base.bean.TPAdInfo;
-import com.tradplus.ads.common.serialization.JSON;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.common.util.LogUtil;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
 import com.tradplus.ads.open.DownloadListener;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
 import com.tradplus.ads.open.interstitial.InterstitialAdListener;
 import com.tradplus.ads.open.interstitial.TPInterstitial;
 import com.tradplus.flutter.TPUtils;
 import com.tradplus.flutter.TradPlusSdk;
+import com.tradplus.ads.base.common.TPTaskManager;
 
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.BinaryMessenger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel.Result;
 
 /** TradplusFlutterDemoPlugin */
 public class TPInterstitialManager {
@@ -55,7 +52,7 @@ public class TPInterstitialManager {
         TPInterstitial tpInterstitial = getOrCreateInterstitial(adUnitId, params);
 
         if ("interstitial_load".equals(call.method)) {
-            tpInterstitial.loadAd();
+            tpInterstitial.loadAd(getMaxWaitTime(params));
 
         } else if ("interstitial_entryAdScenario".equals(call.method)) {
             tpInterstitial.entryAdScenario(call.argument("sceneId"));
@@ -75,6 +72,18 @@ public class TPInterstitialManager {
 
         }
 
+    }
+
+    private float getMaxWaitTime(Map<String, Object> params){
+        try {
+            if(params.containsKey("maxWaitTime")) {
+                return  new Double((double) params.get("maxWaitTime")).floatValue();
+            }
+        }catch (Throwable throwable){
+            return 0;
+        }
+
+        return 0;
     }
 
     private TPInterstitial getOrCreateInterstitial(String adUnitId, Map<String, Object> params) {
@@ -105,12 +114,16 @@ public class TPInterstitialManager {
             if ( params.containsKey("customMap")) {
                 SegmentUtils.initPlacementCustomMap(adUnitId, (Map<String, String>) params.get("customMap"));
             }
+
+            if(params.containsKey("openAutoLoadCallback")) {
+                boolean openAutoLoadCallback = (boolean) params.get("openAutoLoadCallback");
+                tpInterstitial.setAutoLoadCallback(openAutoLoadCallback);
+            }
         }
 
 
         return tpInterstitial;
     }
-
 
     private class TPInterstitialDownloadListener implements DownloadListener {
         private String mAdUnitId;
@@ -268,9 +281,15 @@ public class TPInterstitialManager {
         @Override
         public void onAdIsLoading(String s) {
             Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
-            final Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put("adUnitID", mAdUnitId);
-            TradPlusSdk.getInstance().sendCallBackToFlutter("interstitial_isLoading", paramsMap);
+            TPTaskManager.getInstance().runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Map<String, Object> paramsMap = new HashMap<>();
+                    paramsMap.put("adUnitID", mAdUnitId);
+                    TradPlusSdk.getInstance().sendCallBackToFlutter("interstitial_isLoading", paramsMap);
+                }
+            });
+
         }
     }
     private class TPInterstitialAdListener implements InterstitialAdListener {

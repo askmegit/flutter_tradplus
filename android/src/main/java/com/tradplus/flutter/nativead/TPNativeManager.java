@@ -8,29 +8,24 @@ import androidx.annotation.NonNull;
 import com.tradplus.ads.base.bean.TPAdError;
 import com.tradplus.ads.base.bean.TPAdInfo;
 import com.tradplus.ads.base.bean.TPBaseAd;
-import com.tradplus.ads.common.serialization.JSON;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.common.util.LogUtil;
 import com.tradplus.ads.mgr.nativead.TPCustomNativeAd;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
 import com.tradplus.ads.open.DownloadListener;
 import com.tradplus.ads.open.LoadAdEveryLayerListener;
-import com.tradplus.ads.open.interstitial.InterstitialAdListener;
 import com.tradplus.ads.open.nativead.NativeAdListener;
 import com.tradplus.ads.open.nativead.TPNative;
 import com.tradplus.ads.open.nativead.TPNativeAdRender;
 import com.tradplus.flutter.TPUtils;
 import com.tradplus.flutter.TradPlusSdk;
-
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.BinaryMessenger;
+import com.tradplus.ads.base.common.TPTaskManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel.Result;
 
 /**
  * TradplusFlutterDemoPlugin
@@ -64,10 +59,10 @@ public class TPNativeManager {
         TPNative tpNative = getOrCreateNative(adUnitId, params);
 
         if ("native_load".equals(call.method)) {
-            tpNative.loadAd();
+            tpNative.loadAd(getMaxWaitTime(params));
 
         } else if ("native_ready".equals(call.method)) {
-            boolean isReady = tpNative.getLoadedCount() > 0;
+            boolean isReady = tpNative.isReady();
             result.success(isReady);
         } else if ("native_entryAdScenario".equals(call.method)) {
             tpNative.entryAdScenario(call.argument("sceneId"));
@@ -80,6 +75,18 @@ public class TPNativeManager {
             Log.e("TradPlusLog", "unknown method");
         }
 
+    }
+
+    private float getMaxWaitTime(Map<String, Object> params){
+        try {
+            if(params.containsKey("maxWaitTime")) {
+                return  new Double((double) params.get("maxWaitTime")).floatValue();
+            }
+        }catch (Throwable throwable){
+            return 0;
+        }
+
+        return 0;
     }
 
     private TPNative getOrCreateNative(String adUnitId, Map<String, Object> params) {
@@ -121,6 +128,11 @@ public class TPNativeManager {
             if (params.containsKey("customMap")) {
                 SegmentUtils.initPlacementCustomMap(adUnitId, (Map<String, String>) params.get("customMap"));
             }
+
+            if(params.containsKey("openAutoLoadCallback")) {
+                boolean openAutoLoadCallback = (boolean) params.get("openAutoLoadCallback");
+                tpNative.setAutoLoadCallback(openAutoLoadCallback);
+            }
         }
         return tpNative;
     }
@@ -154,7 +166,7 @@ public class TPNativeManager {
     }
 
 
-    public boolean renderView(String adUnitId, ViewGroup viewContainer, TPNativeAdRender adRender, String adSceneId, Map<String, Object> customAdInfo) {
+    public boolean renderView(String adUnitId, ViewGroup viewContainer, TPNativeAdRender adRender, String adSceneId,Map<String, Object> customAdInfo) {
         TPNative tpNative = mTPNatives.get(adUnitId);
         if (tpNative == null) {
             // print log
@@ -333,9 +345,15 @@ public class TPNativeManager {
         @Override
         public void onAdIsLoading(String s) {
             Log.v("TradPlusSdk", "onAdIsLoading unitid=" + mAdUnitId + "=======================");
-            final Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put("adUnitID", mAdUnitId);
-            TradPlusSdk.getInstance().sendCallBackToFlutter("native_isLoading", paramsMap);
+            TPTaskManager.getInstance().runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Map<String, Object> paramsMap = new HashMap<>();
+                    paramsMap.put("adUnitID", mAdUnitId);
+                    TradPlusSdk.getInstance().sendCallBackToFlutter("native_isLoading", paramsMap);
+                }
+            });
+
         }
     }
 

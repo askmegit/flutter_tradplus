@@ -7,6 +7,8 @@ class TPSplash {
   Map createSplashExtraMap({
     Map? customMap, //流量分组Map
     Map? localParams, //客户设置特殊参数数据
+    bool openAutoLoadCallback = false,
+    double maxWaitTime = 0,
   }) {
     Map extraMap = {};
     if (localParams != null) {
@@ -15,6 +17,8 @@ class TPSplash {
     if (customMap != null) {
       extraMap['customMap'] = customMap;
     }
+    extraMap['openAutoLoadCallback'] = openAutoLoadCallback;
+    extraMap['maxWaitTime'] = maxWaitTime;
     return extraMap;
   }
 
@@ -28,6 +32,16 @@ class TPSplash {
     TradplusSdk.channel.invokeMethod('splash_load', arguments);
   }
 
+  ///进入广告场景：adUnitId 广告位ID ,sceneId 从Tradplus后台获取到到场景ID
+  Future<void> entrySplashAdScenario(String adUnitId, {String? sceneId}) async {
+    Map arguments = {};
+    arguments['adUnitID'] = adUnitId;
+    if (sceneId != null) {
+      arguments['sceneId'] = sceneId;
+    }
+    TradplusSdk.channel.invokeMethod('splash_entryAdScenario', arguments);
+  }
+
   ///广告是否ready：adUnitId 广告位ID
   Future<bool> splashAdReady(String adUnitId) async {
     return await TradplusSdk.channel
@@ -35,15 +49,19 @@ class TPSplash {
   }
 
   ///展示广告：adUnitId 广告位ID ,className 用户自定义模版名称  此接口仅支持iOS
-  Future<void> showSplashAd(String adUnitId,{String className = ""}) async {
+  Future<void> showSplashAd(String adUnitId,
+      {String className = "", String? sceneId}) async {
     Map arguments = {};
     arguments['adUnitID'] = adUnitId;
     arguments['className'] = className;
+    if (sceneId != null) {
+      arguments['sceneId'] = sceneId;
+    }
     TradplusSdk.channel.invokeMethod('splash_show', arguments);
   }
 
   ///开发者通过此接口在展示前设置透传信息，透传信息可以在广告展示后的相关回调的adInfo中获取
-  Future<void> setCustomAdInfo(String adUnitId,Map customAdInfo) async {
+  Future<void> setCustomAdInfo(String adUnitId, Map customAdInfo) async {
     Map arguments = {};
     arguments['adUnitID'] = adUnitId;
     arguments['customAdInfo'] = customAdInfo;
@@ -89,23 +107,20 @@ class TPSplash {
       listener.onBiddingStart!(adUnitId, adInfo);
     } else if (method == 'splash_bidEnd') {
       listener.onBiddingEnd!(adUnitId, adInfo, error);
-    }
-    else if(method == 'splash_isLoading')
-    {
+    } else if (method == 'splash_isLoading') {
       listener.onAdIsLoading!(adUnitId);
-    }
-    else if (method == 'splash_oneLayerLoaded') {
+    } else if (method == 'splash_oneLayerLoaded') {
       listener.oneLayerLoaded!(adUnitId, adInfo);
     } else if (method == 'splash_oneLayerLoadedFail') {
       listener.oneLayerLoadFailed(adUnitId, adInfo, error);
     } else if (method == 'splash_allLoaded') {
       bool isSuccess = arguments["success"];
       listener.onAdAllLoaded!(adUnitId, isSuccess);
-    }else if (method == 'splash_onZoomOutStart') {
+    } else if (method == 'splash_onZoomOutStart') {
       listener.onZoomOutStart!(adUnitId, adInfo);
-    }else if (method == 'splash_onZoomOutEnd') {
+    } else if (method == 'splash_onZoomOutEnd') {
       listener.onZoomOutEnd!(adUnitId, adInfo);
-    }else if (method == 'splash_onSkip') {
+    } else if (method == 'splash_onSkip') {
       listener.onSkip!(adUnitId, adInfo);
     } else if (method == 'splash_downloadstart') {
       num l = arguments["l"];
@@ -205,6 +220,5 @@ class TPSplashAdListener {
       this.onInstall,
       this.onZoomOutStart,
       this.onZoomOutEnd,
-      this.onSkip
-      });
+      this.onSkip});
 }

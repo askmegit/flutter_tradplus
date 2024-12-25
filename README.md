@@ -2,11 +2,11 @@
 
 # fork https://github.com/tradplus/flutter_demo
 
-# 当前版本1.0.5 [https://docs.tradplusad.com/docs/integration_flutter/download_flutter]
+# 当前版本1.1.7 [https://docs.tradplusad.com/docs/integration_flutter/download_flutter]
 
-# android 9.0.0.1
+# android 12.3.0.1
 
-# iOS 8.7.0
+# iOS 12.0.0
 
 # 修改了原SDK中Android部分的代码,主要是把依赖由example改到了插件中,这样业务方只需要依赖此SDK即可,无需其它配置操作
 

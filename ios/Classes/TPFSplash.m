@@ -13,9 +13,6 @@
 @interface TPFSplash()<TradPlusADSplashDelegate>
 
 @property (nonatomic,strong)TradPlusAdSplash *splash;
-
-@property (nonatomic,strong) UIView* bottomView;
-
 @end
 
 @implementation TPFSplash
@@ -45,61 +42,26 @@
         self.splash.segmentTag = segmentTag;
     }
     self.splash.dicCustomValue = dic;
-    
-    
-    //这里添加自定义底部view的逻辑
-    NSString* bottomLayoutNibName ;
-    if([dic.allKeys containsObject:@"bottom_layout_nib"]){
-        bottomLayoutNibName = dic[@"bottom_layout_nib"];
-    }
-    [self setCustomBottomView: bottomLayoutNibName];
 }
 
-
-//自定义底部view
--(void)setCustomBottomView:(NSString*)layoutNibName {
-    
-    if(layoutNibName == nil){
-        _bottomView = nil ;
-    }else{
-        NSArray * array = [[NSBundle mainBundle] loadNibNamed:layoutNibName owner:nil options:nil];
-        if(array != nil && array.count > 0){
-            _bottomView = array.firstObject;
-            CGFloat height = _bottomView.bounds.size.height;
-            _bottomView.frame = CGRectMake(0, [MsCommon getTopWindow].bounds.size.height - height, [MsCommon getTopWindow].bounds.size.width, height);
-        }
-    }
-}
-
--(void)showCustomBottomView{
-    if(_bottomView != nil){
-        [[MsCommon getTopWindow] addSubview:_bottomView];
-    }
-}
-
--(void)removeCustomBottomView{
-    if(_bottomView != nil){
-        [_bottomView removeFromSuperview];
-        _bottomView = nil;
-    }
-}
-
-
-- (void)loadAd
+- (void)loadAdWithMaxWaitTime:(NSTimeInterval)maxWaitTime
 {
     MSLogTrace(@"%s", __PRETTY_FUNCTION__);
-    [self.splash loadAdWithWindow:[MsCommon getTopWindow] bottomView:_bottomView];
+    [self.splash loadAdWithWindow:[MsCommon getTopWindow] bottomView:nil maxWaitTime:maxWaitTime];
+}
+
+- (void)openAutoLoadCallback
+{
+    [self.splash openAutoLoadCallback];
 }
 
 - (void)showAd
 {
     MSLogTrace(@"%s", __PRETTY_FUNCTION__);
     [self.splash show];
-    [self showCustomBottomView];
-    
 }
 
-- (void)showAdWithClassName:(NSString *)className
+- (void)showAdWithClassName:(NSString *)className sceneId:(NSString *)sceneId
 {
     MSLogTrace(@"%s", __PRETTY_FUNCTION__);
     if(className != nil
@@ -109,13 +71,11 @@
         Class class = NSClassFromString(className);
         if(class != nil)
         {
-            [self.splash showWithRenderingViewClass:class];
-            [self showCustomBottomView];
+            [self.splash showWithRenderingViewClass:class sceneId:sceneId];
             return;
         }
     }
-    [self.splash show];
-    [self showCustomBottomView];
+    [self.splash showWithSceneId:sceneId];
 }
 
 - (BOOL)isAdReady
@@ -124,10 +84,22 @@
     return self.splash.isAdReady;
 }
 
+- (void)entryAdScenario:(NSString *)sceneId
+{
+    MSLogTrace(@"%s", __PRETTY_FUNCTION__);
+    [self.splash entryAdScenario:sceneId];
+}
+
 - (void)setCustomAdInfo:(NSDictionary *)customAdInfo
 {
     MSLogTrace(@"%s", __PRETTY_FUNCTION__);
     self.splash.customAdInfo = customAdInfo;
+}
+
+- (void)setLocalParams:(NSDictionary *)dic
+{
+    self.splash.localParams = dic;
+    MSLogTrace(@"%s dic:%@", __PRETTY_FUNCTION__,dic);
 }
 
 - (NSString *)eventName:(NSString *)event
@@ -184,7 +156,6 @@
     MSLogTrace(@"%s adInfo:%@", __PRETTY_FUNCTION__, adInfo);
     NSString *eventNam = [self eventName:@"closed"];
     [TradplusSdkPlugin callbackWithEventName:eventNam adUnitID:self.splash.unitID adInfo:adInfo error:nil];
-    [self removeCustomBottomView];
 }
 
 ///v7.6.0+新增 开始加载流程

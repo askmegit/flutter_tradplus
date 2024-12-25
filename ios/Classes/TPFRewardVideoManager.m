@@ -76,8 +76,10 @@
         rewardVideo = [[TPFRewardVideo alloc] init];
         self.rewardVideoAds[adUnitID] = rewardVideo;
     }
-    [rewardVideo setAdUnitID:adUnitID];
     NSDictionary *extraMap = call.arguments[@"extraMap"];
+    CGFloat maxWaitTime = 0;
+    NSString *userId = nil;
+    NSString *customData = nil;
     if(extraMap != nil)
     {
         id customMap = extraMap[@"customMap"];
@@ -85,14 +87,26 @@
         {
             [rewardVideo setCustomMap:customMap];
         }
+        id localParams = extraMap[@"localParams"];
+        if(localParams != nil && [localParams isKindOfClass:[NSDictionary class]])
+        {
+            [rewardVideo setLocalParams:localParams];
+        }
+        userId = extraMap[@"userId"];
+        customData = extraMap[@"customData"];
+        BOOL openAutoLoadCallback = [extraMap[@"openAutoLoadCallback"] boolValue];
+        if(openAutoLoadCallback)
+        {
+            [rewardVideo openAutoLoadCallback];
+        }
+        maxWaitTime = [extraMap[@"maxWaitTime"] floatValue];
     }
-    NSString *userId = extraMap[@"userId"];
-    NSString *customData = extraMap[@"customData"];
+    [rewardVideo setAdUnitID:adUnitID];
     if(userId != nil)
     {
         [rewardVideo setServerSideVerificationOptionsWithUserID:userId customData:customData];
     }
-    [rewardVideo loadAd];
+    [rewardVideo loadAdWithMaxWaitTime:maxWaitTime];
 }
 
 - (void)isAdReadyWithAdUnitID:(NSString *)adUnitID result:(FlutterResult)result

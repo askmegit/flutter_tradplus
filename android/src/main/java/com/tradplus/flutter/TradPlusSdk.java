@@ -7,36 +7,32 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.tradplus.ads.base.bean.TPAdInfo;
-import com.tradplus.ads.base.common.TPDiskManager;
 import com.tradplus.ads.base.common.TPPrivacyManager;
 import com.tradplus.ads.base.common.TPTaskManager;
-import com.tradplus.ads.common.ClientMetadata;
-import com.tradplus.ads.common.util.LogUtil;
-import com.tradplus.ads.core.AdCacheManager;
+import com.tradplus.ads.base.util.SegmentUtils;
 import com.tradplus.ads.core.GlobalImpressionManager;
-import com.tradplus.ads.mobileads.gdpr.Const;
-import com.tradplus.ads.mobileads.util.SegmentUtils;
-import com.tradplus.ads.mobileads.util.TestDeviceUtil;
-import com.tradplus.ads.open.offerwall.TPOfferWall;
 import com.tradplus.flutter.banner.TPBannerManager;
 import com.tradplus.flutter.banner.TPBannerViewFactory;
-import com.tradplus.flutter.nativead.TPNativeManager;
 import com.tradplus.flutter.interstitial.TPInterstitialManager;
+import com.tradplus.flutter.nativead.TPNativeManager;
 import com.tradplus.flutter.nativead.TPNativeViewFactory;
 import com.tradplus.flutter.offerwall.TPOfferWallManager;
 import com.tradplus.flutter.reward.TPRewardManager;
 import com.tradplus.flutter.splash.TPSplashManager;
 import com.tradplus.flutter.splash.TPSplashViewFactory;
+import com.tradplus.flutter.interactive.TPInteractiveManager;
+import com.tradplus.flutter.interactive.TPInterActiveViewFactory;
+import com.tradplus.meditaiton.utils.ImportSDKUtil;
+import com.tradplus.flutter.TPUtils;
+import com.tradplus.flutter.UID2Manager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.BinaryMessenger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * TradplusFlutterDemoPlugin
@@ -74,6 +70,8 @@ public class TradPlusSdk {
                         TPBannerManager.getInstance().onMethodCall(call, result);
                     } else if (call.method.startsWith("splash_")) {
                         TPSplashManager.getInstance().onMethodCall(call, result);
+                    } else if (call.method.startsWith("interactive_")) {
+                        TPInteractiveManager.getInstance().onMethodCall(call, result);
                     } else if (call.method.equals("tp_version")) {
                         result.success(getSdkVersion());
                     } else if (call.method.equals("tp_init")) {
@@ -97,7 +95,7 @@ public class TradPlusSdk {
                     } else if (call.method.equals("tp_getCOPPAIsAgeRestrictedUser")) {
                         result.success(isCOPPAAgeRestrictedUser());
                     } else if (call.method.equals("tp_showGDPRDialog")) {
-                        showGDPRDialog();
+                        showGDPRDialog(call, result);
                     } else if (call.method.equals("tp_setOpenPersonalizedAd")) {
                         setOpenPersonalizedAdMethonCall(call, result);
                     } else if (call.method.equals("tp_isOpenPersonalizedAd")) {
@@ -108,9 +106,7 @@ public class TradPlusSdk {
                         result.success(isFirstShowGDPR());
                     } else if (call.method.equals("tp_setCustomMap")) {
                         setSegmentMap(call, result);
-                    } else if (call.method.equals("tp_setTestDevice")) {
-                        setTestDevice(call, result);
-                    } else if (call.method.equals("tp_setMaxDatabaseSize")) {
+                    }else if (call.method.equals("tp_setMaxDatabaseSize")) {
                         setMaxDatabaseSize(call, result);
                     } else if (call.method.equals("tp_clearCache")) {
                         clearCache(call, result);
@@ -124,6 +120,14 @@ public class TradPlusSdk {
                         setOpenDelayLoadAds(call, result);
                     } else if (call.method.equals("tp_addGlobalAdImpressionListener")) {
                         setGlobalImpressionListener(call, result);
+                    }else if (call.method.equals("tp_setSettingDataParam")) {
+                        setSettingDataParam(call, result);
+                    }else if (call.method.equals("tp_openTradPlusTool")) {
+                        openTradPlusTool(call, result);
+                    }else if (call.method.equals("uid2_start")) {
+                        UID2Manager.getInstance().onMethodCall(call, result);
+                    }else if (call.method.equals("uid2_reset")) {
+                        UID2Manager.getInstance().onMethodCall(call, result);
                     } else {
                         Log.e("TradPlusLog", "unknown method");
                     }
@@ -136,12 +140,12 @@ public class TradPlusSdk {
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("tp_native_view", new TPNativeViewFactory(flutterPluginBinding.getBinaryMessenger()));
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("tp_banner_view", new TPBannerViewFactory(flutterPluginBinding.getBinaryMessenger()));
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("tp_splash_view", new TPSplashViewFactory(flutterPluginBinding.getBinaryMessenger()));
+        flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("tp_interactive_view", new TPInterActiveViewFactory(flutterPluginBinding.getBinaryMessenger()));
     }
 
     private void clearCache(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         String unitId = call.argument("adUnitId");
-        int readyAdNum = AdCacheManager.getInstance().getReadyAdNum(unitId);
-        AdCacheManager.getInstance().removeEndCache(unitId, readyAdNum);
+        com.tradplus.ads.open.TradPlusSdk.clearCache(unitId);
     }
 
     private void setSegmentMap(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -152,14 +156,17 @@ public class TradPlusSdk {
             SegmentUtils.initCustomMap(customMap);
         }
     }
-
-    private void setTestDevice(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        boolean isTestDevice = call.argument("testDevice");
-        String testModeId = call.argument("testModeId");
-        TestDeviceUtil.getInstance().setNeedTestDevice(isTestDevice, testModeId);
+    private void setSettingDataParam(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+        Map<String, Object> settingMap = call.argument("setting");
+        Log.i("tradplus", "settingMap = " + settingMap);
+        if (settingMap != null) {
+            com.tradplus.ads.open.TradPlusSdk.setSettingDataParam(settingMap);
+        }
     }
 
-    public void showGDPRDialog() {
+    public void showGDPRDialog(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+        String url = call.argument("gdprurl");
+
         com.tradplus.ads.open.TradPlusSdk.showUploadDataNotifyDialog(getApplicationContext(), new com.tradplus.ads.open.TradPlusSdk.TPGDPRAuthListener() {
             @Override
             public void onAuthResult(int level) {
@@ -167,7 +174,8 @@ public class TradPlusSdk {
                 paramsMap.put("level", level);
                 TradPlusSdk.getInstance().sendCallBackToFlutter("tp_dialogClosed", paramsMap);
             }
-        }, Const.URL.GDPR_URL);
+        }, url);
+
     }
 
 
@@ -213,7 +221,7 @@ public class TradPlusSdk {
 
     public void setMaxDatabaseSize(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         long size = call.argument("size");
-        TPDiskManager.getInstance().setMaxDatabaseSize(size);
+        com.tradplus.ads.open.TradPlusSdk.setMaxDatabaseSize(size);
     }
 
     public void currentAreaMethonCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -340,7 +348,7 @@ public class TradPlusSdk {
     }
 
     private String getSdkVersion() {
-        return ClientMetadata.getInstance(getApplicationContext()).getSdkVersion();
+        return com.tradplus.ads.open.TradPlusSdk.getSdkVersion();
     }
 
     public void sendCallBackToFlutter(final String callName, final Map<String, Object> paramsMap) {
@@ -368,5 +376,17 @@ public class TradPlusSdk {
 
     public Context getApplicationContext() {
         return mainAtivity.getApplicationContext();
+    }
+
+    public void openTradPlusTool(@NonNull MethodCall call, @NonNull MethodChannel.Result result){
+        String appid = call.argument("appId");
+
+        try{
+            ImportSDKUtil.getInstance().showTestTools(getActivity(), appid);
+
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
+
     }
 }

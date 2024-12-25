@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
+
 import 'configure.dart';
 import 'log.dart';
 
@@ -44,7 +45,8 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       loadAd();
                     },
@@ -53,7 +55,8 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       checkAdReady();
                     },
@@ -62,7 +65,8 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       showAd();
                     },
@@ -71,7 +75,8 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       entryInterstitialAdScenario();
                     },
@@ -107,14 +112,11 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
       "custom_data": "interstitial_customData"
     };
     Map extraMap = TPInterstitialManager.createInterstitialExtraMap(
-        customMap: customMap,localParams:localParams);
+        customMap: customMap, localParams: localParams);
     TPInterstitialManager.loadInterstitialAd(unitId, extraMap: extraMap);
 
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Load",
-      "time":time
-    };
+    Map customAdInfo = {"act": "Load", "time": time};
     TPInterstitialManager.setCustomAdInfo(unitId, customAdInfo);
   }
 
@@ -122,12 +124,8 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
   showAd() async {
     bool isReady = await TPInterstitialManager.interstitialAdReady(unitId);
     if (isReady) {
-
       String time = DateTime.now().millisecondsSinceEpoch.toString();
-      Map customAdInfo ={
-        "act":"Show",
-        "time":time
-      };
+      Map customAdInfo = {"act": "Show", "time": time};
       TPInterstitialManager.setCustomAdInfo(unitId, customAdInfo);
 
       TPInterstitialManager.showInterstitialAd(unitId, sceneId: sceneId);
@@ -204,6 +202,9 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
         TPAdConfiguration.showLog(
             'onBiddingEnd : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
       },
+      onAdIsLoading: (adUnitId) {
+        TPAdConfiguration.showLog('onAdIsLoading : adUnitId = $adUnitId');
+      },
       oneLayerStartLoad: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'oneLayerStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
@@ -224,27 +225,28 @@ class InterstitialWidgetState extends State<InterstitialWidget> {
         TPAdConfiguration.showLog(
             'onAdAllLoaded : adUnitId = $adUnitId, isSuccess = $isSuccess');
       },
-      onDownloadStart: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadStart: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadUpdate: (adUnitId, totalBytes,currBytes,fileName,appName, progress) {
+      onDownloadUpdate:
+          (adUnitId, totalBytes, currBytes, fileName, appName, progress) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName, progress = $progress');
       },
-      onDownloadPause: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadPause: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadPause : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFinish: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFinish: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFinish : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFail: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFail: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFail : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onInstall: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onInstall: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onInstall : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },

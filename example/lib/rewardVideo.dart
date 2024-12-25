@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tradplus_sdk/tradplus_sdk.dart';
+
 import 'configure.dart';
 import 'log.dart';
 
@@ -44,7 +45,8 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       loadAd();
                     },
@@ -53,7 +55,8 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       checkAdReady();
                     },
@@ -62,7 +65,8 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       showAd();
                     },
@@ -71,7 +75,8 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
                           color: Colors.black,
                         ))),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white70),
                     onPressed: () {
                       entryRewardAdScenario();
                     },
@@ -108,16 +113,13 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
     };
     Map extraMap = TPRewardVideoManager.createRewardVideoExtraMap(
         customMap: customMap,
-        localParams : localParams,
+        localParams: localParams,
         userId: "rewardVideo_userId",
         customData: "rewardVideo_customData");
     TPRewardVideoManager.loadRewardVideoAd(unitId, extraMap: extraMap);
 
     String time = DateTime.now().millisecondsSinceEpoch.toString();
-    Map customAdInfo ={
-      "act":"Load",
-      "time":time
-    };
+    Map customAdInfo = {"act": "Load", "time": time};
     TPRewardVideoManager.setCustomAdInfo(unitId, customAdInfo);
   }
 
@@ -125,12 +127,8 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
   showAd() async {
     bool isReady = await TPRewardVideoManager.rewardVideoAdReady(unitId);
     if (isReady) {
-
       String time = DateTime.now().millisecondsSinceEpoch.toString();
-      Map customAdInfo ={
-        "act":"Show",
-        "time":time
-      };
+      Map customAdInfo = {"act": "Show", "time": time};
       TPRewardVideoManager.setCustomAdInfo(unitId, customAdInfo);
 
       TPRewardVideoManager.showRewardVideoAd(unitId, sceneId: sceneId);
@@ -211,6 +209,9 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
         TPAdConfiguration.showLog(
             'onBiddingEnd : adUnitId = $adUnitId, adInfo = $adInfo, error = $error');
       },
+      onAdIsLoading: (adUnitId) {
+        TPAdConfiguration.showLog('onAdIsLoading : adUnitId = $adUnitId');
+      },
       oneLayerStartLoad: (adUnitId, adInfo) {
         TPAdConfiguration.showLog(
             'oneLayerStartLoad : adUnitId = $adUnitId, adInfo = $adInfo');
@@ -253,27 +254,28 @@ class RewardVideoWidgetState extends State<RewardVideoWidget> {
         TPAdConfiguration.showLog(
             'onPlayAgainVideoPlayEnd : adUnitId = $adUnitId, adInfo = $adInfo');
       },
-      onDownloadStart: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadStart: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadUpdate: (adUnitId, totalBytes,currBytes,fileName,appName, progress) {
+      onDownloadUpdate:
+          (adUnitId, totalBytes, currBytes, fileName, appName, progress) {
         TPAdConfiguration.showLog(
             'onDownloadStart : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName, progress = $progress');
       },
-      onDownloadPause: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadPause: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadPause : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFinish: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFinish: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFinish : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onDownloadFail: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onDownloadFail: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onDownloadFail : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },
-      onInstall: (adUnitId, totalBytes,currBytes,fileName,appName) {
+      onInstall: (adUnitId, totalBytes, currBytes, fileName, appName) {
         TPAdConfiguration.showLog(
             'onInstall : adUnitId = $adUnitId, totalBytes = $totalBytes, currBytes = $currBytes, fileName = $fileName, appName = $appName');
       },

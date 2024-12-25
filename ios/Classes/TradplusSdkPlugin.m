@@ -8,6 +8,7 @@
 #import "TPFBannerManager.h"
 #import "TradplusSdkManager.h"
 #import "TPFOfferwallManager.h"
+#import "TTDUID2Manager.h"
 
 @implementation TradplusSdkPlugin
 
@@ -35,6 +36,10 @@ static FlutterMethodChannel *channel;
     if([call.method isEqualToString:@"tp_addGlobalAdImpressionListener"])
     {
         [[TradplusSdkManager sharedInstance] addGlobalAdImpressionDelegate];
+    }
+    else if([call.method hasPrefix:@"uid2_"])
+    {
+        [[TTDUID2Manager sharedInstance] handleMethodCall:call result:result];
     }
     else if([call.method hasPrefix:@"tp_"])
     {
@@ -93,7 +98,10 @@ static FlutterMethodChannel *channel;
     {
         [arguments addEntriesFromDictionary:exp];
     }
-    [channel invokeMethod:name arguments:arguments];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [channel invokeMethod:name arguments:arguments];
+    });
+    
 }
 
 + (void)callbackWithEventName:(NSString *)name adUnitID:(NSString *)adUnitID adInfo:(NSDictionary *)adInfo error:(NSError *)error
